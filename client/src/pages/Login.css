@@ -1,17 +1,3 @@
-/* Welcome Back / Signup */
-/* Typeface: OpenSans-SemiBold */
-
-/* Email address/password */
-/* Typeface:  OpenSans-Regular */
-
-/* Switch to Create account/Login button */
-/* Shadows: x: 0, y:2, blur: 4 */
-
-/* Create/Login button */
-/* Color: #3A8DFF */
-
-
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap');
 
 .loginContainer {
     position: relative;

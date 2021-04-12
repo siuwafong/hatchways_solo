@@ -1,11 +1,10 @@
-import React, { useReducer, useState } from "react"
+import React, { useReducer} from "react"
 import './Login.css'
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Background from '../components/Background'
 import { Link } from 'react-router-dom'
-import { CardActionArea } from "@material-ui/core";
 
 const SwitchButton = withStyles({
     root: {
@@ -31,7 +30,6 @@ const LoginButton = withStyles({
 const formReducer = (state, action) => {
     switch(action.type) {
         case 'email':
-            console.log(action.payload)
             return {
                 ...state,
                 email: {

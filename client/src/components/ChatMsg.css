@@ -1,0 +1,40 @@
+.receivedMsgPic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.msgPic {
+    width: 250px;
+    border-radius: 10px;
+}
+
+.receivedMsg {
+    display: flex;
+    flex-direction: row;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.sentMsg {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.receivedMsgBubble {
+    border-radius: 20px;
+    border-top-left-radius: 0;
+    background-color: #3A8DFF;
+    color: #FFFFFF;
+    padding: 5px 5px;
+}
+
+.sentMsgBubble {
+    border-radius: 20px;
+    border-top-left-radius: 0;
+    background-color: #bbb;
+    color: #FFFFFF;
+    padding: 5px 5px;
+}
