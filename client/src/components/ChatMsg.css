@@ -16,11 +16,13 @@
     flex-direction: row;
     margin: 15px 0;
     align-items: center;
+    padding: 5px;
 }
 
 .sentMsg {
     align-self: flex-end;
     text-align: right;
+    padding: 5px;
 }
 
 .receivedMsgBubble {

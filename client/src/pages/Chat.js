@@ -9,6 +9,7 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { MOCK_PROFILE, MOCK_FRIENDS, MOCK_MSGS } from '../utils/MockData'
 import ChatMsg from '../components/ChatMsg'
 import { v4 as uuidv4 } from 'uuid';
+import InvitationDialog from "../components/InvitationDialog"
 import './Chat.css'
 
 const Chat = () => {
@@ -60,6 +61,10 @@ const Chat = () => {
 
     return (
         <div className="chatContainer">
+            <InvitationDialog 
+                type="friendInvite"
+                content="abc"
+            />
             <div className="chatListContainer">
                 <div className="currentUserContainer">
                     <div className="currentUserPicStatus">
