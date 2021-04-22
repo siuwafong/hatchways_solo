@@ -1,8 +1,7 @@
 import React, { useReducer } from "react"
 import './Signup.css'
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
+import { Grid, TextField, Button } from '@material-ui/core';
 import Background from '../components/Background'
 import { Link } from 'react-router-dom'
 
@@ -59,7 +58,6 @@ const formReducer = (state, action) => {
             return (action.payload.username.isValid && action.payload.email.isValid && action.payload.password.isValid)
         default:
             return state
-        break
     }
 }
 
@@ -88,9 +86,9 @@ const Signup = () => {
     const [formState, formDispatch] = useReducer(formReducer, initialFormState)
 
     return (
-        <div className="signinContainer">
+        <Grid className="signinContainer">
 
-            <div className="switchSection"> 
+            <Grid className="switchSection"> 
 
                 <p className="SwitchMsg">
                     Already have an account?
@@ -106,13 +104,13 @@ const Signup = () => {
                         Login
                     </Link>
                 </SwitchButton>
-            </div>
+            </Grid>
 
             <form className="signupForm">
                 <h1>
                     Create an account.
                 </h1>
-                <div className="signupInput">
+                <Grid className="signupInput">
                     <TextField 
                         label="Username" 
                         fullWidth
@@ -124,8 +122,8 @@ const Signup = () => {
                         placeholder="Select a username that is at least 4 characters long"
                         error={!formState.username.isValid}
                     />
-                </div>
-                <div className="signupInput">
+                </Grid>
+                <Grid className="signupInput">
                     <TextField 
                         label="E-mail address" 
                         placeholder="e.g., john@gmail.com" 
@@ -138,8 +136,8 @@ const Signup = () => {
                         error={!formState.email.isValid}
                         required
                     />
-                </div>
-                <div className="signupInput">
+                </Grid>
+                <Grid className="signupInput">
                     <TextField 
                         label="Password" 
                         type="password"
@@ -150,10 +148,9 @@ const Signup = () => {
                             payload: e.target.value
                         })}
                         error={!formState.password.isValid}
-                        placeholder="Password must be at least 6 characters long"
                         required
                     />
-                </div>
+                </Grid>
 
                 <CreateButton   
                     className="createBtn"
@@ -165,7 +162,7 @@ const Signup = () => {
             </form>
             <Background />
 
-        </div>
+        </Grid>
     )
 }
 

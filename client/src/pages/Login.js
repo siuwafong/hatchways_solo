@@ -1,8 +1,7 @@
 import React, { useReducer} from "react"
 import './Login.css'
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
+import { TextField, Grid, Button } from '@material-ui/core'
 import Background from '../components/Background'
 import { Link } from 'react-router-dom'
 
@@ -69,7 +68,6 @@ const Login = () => {
 
     const [formState, formDispatch] = useReducer(formReducer, initialFormState)
 
-
     const submitHandler = (e) => {
         e.preventDefault()
         formDispatch({
@@ -82,9 +80,9 @@ const Login = () => {
     }
 
     return (
-        <div className="loginContainer">
+        <Grid className="loginContainer">
 
-            <div className="switchSection">
+            <Grid className="switchSection">
                 <p className="SwitchMsg">
                     Don't have an account?
                 </p>
@@ -99,7 +97,7 @@ const Login = () => {
                         Create account
                     </Link>
                 </SwitchButton>
-            </div>
+            </Grid>
 
             <form 
                 className="loginForm"
@@ -108,7 +106,7 @@ const Login = () => {
                 <h1>
                     Welcome back!
                 </h1>
-                <div className="loginInput">
+                <Grid className="loginInput">
                     <TextField 
                         label="E-mail address" 
                         placeholder="Input your email address registered with us here" 
@@ -120,8 +118,8 @@ const Login = () => {
                         })}
                         required
                     />
-                </div>
-                <div className="loginInput">
+                </Grid>
+                <Grid className="loginInput">
                     <TextField 
                         label="Password" 
                         fullWidth
@@ -133,7 +131,7 @@ const Login = () => {
                         placeholder="Input your password here"
                         required
                     />
-                </div>
+                </Grid>
                 <p className="loginForgotMsg">
                     Forgot?
                 </p>
@@ -148,7 +146,7 @@ const Login = () => {
 
             <Background />
 
-        </div>
+        </Grid>
     )
 }
 

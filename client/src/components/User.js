@@ -1,22 +1,23 @@
 import React from "react"
 import "./User.css"
+import { Grid, Typography } from '@material-ui/core'
 
 const User = ({ username, profileImg, status, recentMsg, unreadMsgs }) => {
     return (
-        <div className="userContainer">
-            <div className="userPicStatus">
+        <Grid className="userContainer">
+            <Grid className="userPicStatus">
                 <img className="userPic" src={profileImg} alt="userPic"/>
-                <div className={`statusDot ${status === "Online" ? "statusAvailable" : "statusAway"}` }></div> 
-            </div>
-            <div className="userNameMsg">
-                <p className="userName"> {username} </p> 
-                <p className={`userMsg ${unreadMsgs > 0 && 'highlightUnreadMsg'}`}> {recentMsg.type === "msg" ? recentMsg.content : "Sent photo"} </p>
-            </div>
-            <div className={`unreadContainer ${unreadMsgs === 0 && 'hideUnreadMsgs'}`}>
-                <div className={`unreadMsgDot ${unreadMsgs > 9 && 'longUnreadMsgDot'}`}></div>
-                <div className="unreadMsgs">{unreadMsgs}</div>
-            </div>
-        </div>
+                <Grid className={`statusDot ${status === "Online" ? "statusAvailable" : "statusAway"}` }></Grid> 
+            </Grid>
+            <Grid className="userNameMsg">
+                <Typography className="userName"> {username} </Typography> 
+                <Typography className={`userMsg ${unreadMsgs > 0 && 'highlightUnreadMsg'}`}> {recentMsg.type === "msg" ? recentMsg.content : "Sent photo"} </Typography>
+            </Grid>
+            <Grid className={`unreadContainer ${unreadMsgs === 0 && 'hideUnreadMsgs'}`}>
+                <Grid className={`unreadMsgDot ${unreadMsgs > 9 && 'longUnreadMsgDot'}`}></Grid>
+                <Grid className="unreadMsgs">{unreadMsgs}</Grid>
+            </Grid>
+        </Grid>
     )
 }
 

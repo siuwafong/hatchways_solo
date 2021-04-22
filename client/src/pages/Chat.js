@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import User from '../components/User'
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import { TextField, InputAdornment, Grid, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
@@ -45,7 +44,6 @@ const Chat = () => {
 
     const toggleMsgSubmit = e => {
         e.preventDefault()
-        console.log(newMsg)
         setMessages([...messages, {
             time: "1200",
             type: "msg",
@@ -59,19 +57,19 @@ const Chat = () => {
     }
 
     return (
-        <div className="chatContainer">
-            <div className="chatListContainer">
-                <div className="currentUserContainer">
-                    <div className="currentUserPicStatus">
+        <Grid className="chatContainer">
+            <Grid className="chatListContainer">
+                <Grid className="currentUserContainer">
+                    <Grid className="currentUserPicStatus">
                         <img className="userPic" src={currentUser.img} alt="userPic"/>
-                        <div className={`statusDot ${currentUser.status === "Online" ? "statusAvailable" : "statusAway"} `}></div> 
-                    </div>
-                    <div className="userNameMsg">
+                        <Grid className={`statusDot ${currentUser.status === "Online" ? "statusAvailable" : "statusAway"} `}></Grid> 
+                    </Grid>
+                    <Grid className="userNameMsg">
                         <p className="userName"> {currentUser.username} </p> 
-                    </div>
+                    </Grid>
                     <MoreHorizIcon />
-                </div>
-                <h3>Chats</h3>
+                </Grid>
+                <Typography variant="h3">Chats</Typography>
                 <TextField
                     className="chatSearchBar"
                     placeholder="Search"
@@ -85,11 +83,12 @@ const Chat = () => {
                         ),
                     }}
                 />
-                <div className="usersContainer">
+                <Grid className="usersContainer">
                 {friends.map(user => (
-                    <div 
+                    <Grid 
                         onClick={() => selectChat(user.id)}
                         className={selectedChat !== null ? (selectedChat.id === user.id && `selectedChat`) : ""}
+                        key={user.id}
                     >
                         <User 
                             username={user.username}
@@ -98,24 +97,22 @@ const Chat = () => {
                             unreadMsgs={user.unreadMsgs}
                             status={user.status}
                             id={user.id}
-                            key={user.id}
                         />
-                    </div>
+                    </Grid>
                 ))}
-                </div>
-            </div>
-            <div className="currentChatContainer">
-
-                <div className="currentChatTitle">
+                </Grid>
+            </Grid>
+            <Grid className="currentChatContainer">
+                <Grid className="currentChatTitle">
                     <span className="currentChatName">{selectedChat !== null && selectedChat.username}</span>
-                    <div className={`statusDotCurrent ${selectedChat !== null ? selectedChat.status === "Online" ? "statusAvailableCurrent" : "statusAwayCurrent" : "hideCurrent"}`}></div> 
+                    <Grid className={`statusDotCurrent ${selectedChat !== null ? selectedChat.status === "Online" ? "statusAvailableCurrent" : "statusAwayCurrent" : "hideCurrent"}`}></Grid> 
                     <span className="currentChatStatus">{selectedChat !== null ? selectedChat.status : ""} </span>
-                    <div className="moreHoriz">
+                    <Grid className="moreHoriz">
                         {selectedChat !== null && <MoreHorizIcon />}
-                    </div>
-                </div>
+                    </Grid>
+                </Grid>
 
-                <div className="chatMsgs">
+                <Grid className="chatMsgs">
                     {messages !== null && messages.map(message => (
                         <ChatMsg 
                             type={message.type}
@@ -127,7 +124,7 @@ const Chat = () => {
                             key={message.id}
                         />
                     ))}
-                </div>
+                </Grid>
 
                 <form className="chatMsg" onSubmit={e => toggleMsgSubmit(e)}>
                     {selectedChat !== null &&
@@ -149,8 +146,8 @@ const Chat = () => {
                     }
                 </form>
                 
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     )
 }
 

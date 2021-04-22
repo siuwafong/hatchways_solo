@@ -1,40 +1,50 @@
 import React from "react"
+import { Typography, Grid } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles';
 import "./ChatMsg.css"
+
+const useStyles = makeStyles({
+    root: {
+        width:  "200px",
+        height: "200px",
+        borderRadius: "10px",
+        alignItems: "center",
+        marginRight: 10,
+    }
+})
 
 const ChatMsg = ({userImg, type, time, content, username, direction}) => {
 
-    if (direction === "sent") {
-        return (
-            <div className="sentMsg">
-                <div>
-                    {time}
-                </div>
+    const classes = useStyles()
+
+    return (
+    direction === "sent" 
+    ? 
+        <Grid className="sentMsg">
+            <Typography>
+                {time}
+            </Typography>
+            {type === "msg" 
+            ? 
+            <Typography className="sentMsgBubble">{content} </Typography>
+            :
+            <img src={content} alt="content" className={classes.root}/>} 
+        </Grid>
+    :
+        <Grid className="receivedMsg">
+            <img className="receivedMsgPic" src={userImg} alt="friendPic" />
+            <Grid className="receivedMsgContent">
+                <Grid>
+                    <Typography>{username} {time}</Typography>
+                </Grid>
                 {type === "msg" 
                 ? 
-                <div className="sentMsgBubble">{content} </div>
+                <Typography className="receivedMsgBubble">{content} </Typography>
                 : 
                 <img src={content} alt="content" className="msgPic"/>}
-            </div>
-        )
-    }
-    
-    else {
-        return (
-            <div className="receivedMsg">
-                <img className="receivedMsgPic" src={userImg} alt="friendPic" />
-                <div className="receivedMsgContent">
-                    <div>
-                        <span>{username} {time}</span>
-                    </div>
-                    {type === "msg" 
-                    ? 
-                    <div className="receivedMsgBubble">{content} </div>
-                    : 
-                    <img src={content} alt="content" className="msgPic"/>}
-                </div>
-            </div>
-        )
-    }
+            </Grid>
+        </Grid>
+    )
 }
 
 export default ChatMsg
