@@ -1,12 +1,6 @@
 import React, { useState } from "react"
 import "./InvitationDialog.css"
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Button, Grid } from '@material-ui/core'
 import validateEmail from '../utils/HelperFunctions'
 
 const InvitationDialog = ({content}) => {
@@ -36,7 +30,7 @@ const InvitationDialog = ({content}) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Enter your friend's email and we will send him an invite to join.
+                        Enter your friend's email and we will send them an invite to join.
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -46,13 +40,10 @@ const InvitationDialog = ({content}) => {
                         type="email"
                         onChange={(e) => handleChange(e)}
                         fullWidth
-                        error={validateEmail(friendEmail)}                    />
+                        error={validateEmail(friendEmail)}          
+                        helperText={invalidEmail === true ? `Please enter a valid email address` : ""}  
+                        />
                 </DialogContent>
-                <DialogContentText>
-                    <div className="invalidEmailMsg">
-                    {invalidEmail === true ? `Please enter a valid email address` : ""}
-                    </div>
-                </DialogContentText>
                 <DialogActions>
                     <Button
                         onClick={() => handleClose("")}
