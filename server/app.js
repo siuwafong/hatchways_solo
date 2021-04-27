@@ -3,6 +3,16 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb+srv://wf1234:wf1234@cluster0.fk4em.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true
+})
+.then((res) => console.log('connected to db'))
+.catch((err) => console.log(err))
+
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
@@ -35,5 +45,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error: err });
 });
+
 
 module.exports = app;
