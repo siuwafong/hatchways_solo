@@ -105,7 +105,7 @@ const Signup = () => {
             <Grid className="switchSection"> 
 
 
-                <p className="SwitchMsg">
+                <p className="switchMsg">
                     Already have an account?
                 </p>
                 <SwitchButton
