@@ -4,28 +4,41 @@ import { withStyles } from '@material-ui/core/styles'
 import { Grid, TextField, Button } from '@material-ui/core';
 import Background from '../components/Background'
 import { Link } from 'react-router-dom'
+import styled from 'styled-components'
+import './Signup.css'
 
-const SwitchButton = withStyles({
-    root: {
-        border: 0,
-        borderRadius: 3,
-        boxShadow: '0 3px 2px 3px #D8D8D8',
-        color: "#3A8DFF",
-        textTransform: "capitalize",
-        fontSize: "1rem"
-    }
-})(Button);
 
-const CreateButton = withStyles({
-    root: {
-        border: 0,
-        borderRadius: 3,
-        backgroundColor: "#3A8DFF",
-        textTransform: 'capitalize',
-        color: "#FFFFFF",
-        size: "small"
-    }
-})(Button);
+
+const SwitchButton = styled(Button)`
+    width: 180px;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 3px 2px 3px #D8D8D8;
+    color: #3A8DFF;
+    text-transform: capitalize;
+    font-size: 1rem;
+`;
+
+const StyledButton = styled(Button)`
+  background-color: #6772e5;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 7px 14px;
+  &:hover {
+    background-color: #5469d4;
+  }
+`;
+
+// const CreateButton = styled(Button)`
+//     border: 0px;
+//     border-radius: 3px;
+//     background-color: #3A8DFF;
+//     text-transform: capitalize;
+//     color: #FFFFFF;
+//     size: small;
+// `;
+
+
 
 const formReducer = (state, action) => {
     switch(action.type) {
@@ -86,23 +99,21 @@ const Signup = () => {
     const [formState, formDispatch] = useReducer(formReducer, initialFormState)
 
     return (
+
         <Grid className="signinContainer">
 
             <Grid className="switchSection"> 
 
+
                 <p className="SwitchMsg">
                     Already have an account?
                 </p>
-                <SwitchButton 
-                    className="switchBtn" 
-                    color="secondary"
-                >
-                    <Link 
-                        to="/login"
-                        className="link"
-                    >
-                        Login
-                    </Link>
+                <SwitchButton
+                    className="switchBtn"
+                    component={Link}
+                    to="/login"
+                >   
+                    Login
                 </SwitchButton>
             </Grid>
 
@@ -152,13 +163,13 @@ const Signup = () => {
                     />
                 </Grid>
 
-                <CreateButton   
+                <StyledButton   
                     className="createBtn"
                     type="submit"
                     style={{fontSize: "1.1rem"}}
                 >
                     Create
-                </CreateButton>
+                </StyledButton>
             </form>
             <Background />
 

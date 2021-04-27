@@ -26,6 +26,7 @@ const LoginButton = withStyles({
     }
 })(Button);
 
+
 const formReducer = (state, action) => {
     switch(action.type) {
         case 'email':
@@ -83,19 +84,16 @@ const Login = () => {
         <Grid className="loginContainer">
 
             <Grid className="switchSection">
-                <p className="SwitchMsg">
+                <p className="switchMsg">
+
                     Don't have an account?
                 </p>
-                <SwitchButton 
-                    className="switchBtn" 
-                    color="secondary"
-                >
-                    <Link 
-                        to="/signup"
-                        className="link"
-                    >
-                        Create account
-                    </Link>
+                <SwitchButton
+                    className="switchBtn"
+                    component={Link}
+                    to="/signup"
+                >   
+                    Signup
                 </SwitchButton>
             </Grid>
 
@@ -135,13 +133,13 @@ const Login = () => {
                 <p className="loginForgotMsg">
                     Forgot?
                 </p>
-                <LoginButton 
+                <Button 
                     type="submit" 
                     className="loginBtn"
                     style={{fontSize: "1.1rem"}}
                 >
                     Login
-                </LoginButton>
+                </Button>
             </form>
 
             <Background />
