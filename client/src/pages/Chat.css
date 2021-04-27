@@ -87,15 +87,6 @@
     visibility: none;
 }
 
-.chatMsg {
-    width: 80%;
-    text-align: center;
-    /* position: absolute; */
-    bottom: 20px;
-    margin: 0 auto;
-    padding: 0 auto;
-}
-
 .chatMsgInput {
     width: 80%;
     background-color: #eaeef8;
