@@ -1,30 +1,31 @@
-import React, { useReducer, useState } from "react"
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField'
+import React, { useReducer} from "react"
+import './Login.css'
+import { withStyles } from '@material-ui/core/styles'
+import { TextField, Grid, Button } from '@material-ui/core'
 import Background from '../components/Background'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
-import './Login.css'
 
+const SwitchButton = withStyles({
+    root: {
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 2px 3px #D8D8D8',
+        color: "#3A8DFF",
+        textTransform: "capitalize",
+        fontSize: "1rem"
+    }
+})(Button);
 
+const LoginButton = withStyles({
+    root: {
+        border: 0,
+        borderRadius: 3,
+        backgroundColor: "#3A8DFF",
+        textTransform: 'capitalize',
+        color: "#FFFFFF", 
+    }
+})(Button);
 
-const SwitchButton = styled(Button)`
-    width: 180px;
-    border: 0;
-    border-radius: 3px;
-    box-shadow: 0 3px 2px 3px #D8D8D8;
-    color: #3A8DFF;
-    text-transform: capitalize;
-    font-size: 1rem;
-`;
-
-// const LoginButton = styled(Button)`
-//     border: 0px;
-//     border-radius: 3px;
-//     background-color: #3A8DFF;
-//     text-transform: capitalize;
-//     color: #FFFFFF;
-// `;
 
 const formReducer = (state, action) => {
     switch(action.type) {
@@ -68,7 +69,6 @@ const Login = () => {
 
     const [formState, formDispatch] = useReducer(formReducer, initialFormState)
 
-
     const submitHandler = (e) => {
         e.preventDefault()
         formDispatch({
@@ -81,10 +81,11 @@ const Login = () => {
     }
 
     return (
-        <div className="loginContainer">
+        <Grid className="loginContainer">
 
-            <div className="switchSection">
+            <Grid className="switchSection">
                 <p className="switchMsg">
+
                     Don't have an account?
                 </p>
                 <SwitchButton
@@ -94,7 +95,7 @@ const Login = () => {
                 >   
                     Signup
                 </SwitchButton>
-            </div>
+            </Grid>
 
             <form 
                 className="loginForm"
@@ -103,7 +104,7 @@ const Login = () => {
                 <h1>
                     Welcome back!
                 </h1>
-                <div className="loginInput">
+                <Grid className="loginInput">
                     <TextField 
                         label="E-mail address" 
                         placeholder="Input your email address registered with us here" 
@@ -115,8 +116,8 @@ const Login = () => {
                         })}
                         required
                     />
-                </div>
-                <div className="loginInput">
+                </Grid>
+                <Grid className="loginInput">
                     <TextField 
                         label="Password" 
                         fullWidth
@@ -128,7 +129,7 @@ const Login = () => {
                         placeholder="Input your password here"
                         required
                     />
-                </div>
+                </Grid>
                 <p className="loginForgotMsg">
                     Forgot?
                 </p>
@@ -143,7 +144,7 @@ const Login = () => {
 
             <Background />
 
-        </div>
+        </Grid>
     )
 }
 
