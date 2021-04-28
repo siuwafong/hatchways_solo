@@ -4,8 +4,11 @@ const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require('mongoose');
+require('dotenv').config()
 
-mongoose.connect('mongodb+srv://wf1234:wf1234@cluster0.fk4em.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+console.log(provess.env.DB_PASS)
+
+mongoose.connect(`mongodb+srv://wf1234:${process.env.DB_PASS}@cluster0.fk4em.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true

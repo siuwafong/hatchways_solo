@@ -12,7 +12,7 @@ const UserSchema = new Schema ({
         required: true
     },
     joinDate: Date,
-    friends: Array
+    friends: [ { type: Schema.Types.ObjectId, ref: "User" } ]
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', UserSchema)
