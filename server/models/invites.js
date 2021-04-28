@@ -7,7 +7,7 @@ const InviteSchema = new Schema({
     senderEmail: { type: Schema.Types.ObjectId, ref: "User" },
     recipient: { 
         type: { type: Schema.Types.ObjectId, ref: "User" },
-        // required: true
+        required: true
     },
     accepted: Boolean,
     responded: Boolean,
