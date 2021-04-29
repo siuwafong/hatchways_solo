@@ -1,0 +1,101 @@
+.chatContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.chatListContainer {
+    margin-left: 20px;
+    margin-top: 30px;
+    width: 350px;
+}
+
+.currentUserContainer {
+    display: flex;
+    justify-content: flex-start;
+    width: 300px;
+    align-items: center;
+}
+
+.currentUserPicStatus {
+    position: relative;
+    margin: 0 20px;
+}
+
+.chatSearchBar {
+    width: 330px;
+    background-color: #eaeef8;
+    border: 1px solid black;
+    font-family: "Open Sans";
+}
+
+.selectedChat {
+    background-color: #eaeef8;
+    border-radius: 5px;
+}
+
+.currentChatContainer {
+    width: 100%;
+    flex-direction: column;
+}
+
+
+.currentChatTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 80px;
+    box-shadow: 2px 2px 3px 4px rgba(0, 0, 0, 0.05); 
+    position: relative;
+}
+
+.currentChatName {
+    margin: 0 20px;
+    font-size: 1.3rem;
+    font-family: "Open sans"
+}
+
+.statusDotCurrent {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    z-index: 3;
+    left: 45px;
+    top: 35px;
+    border: 2px solid white;
+    margin-right: 5px;
+}
+
+.statusAwayCurrent {
+    background-color: #bbb;
+}
+
+.statusAvailableCurrent {
+    background-color: #1CED84;
+}
+
+.currentChatStatus {
+    color: #bbb
+}
+
+.moreHoriz {
+    position: absolute;
+    right: 30px;
+}
+
+.hideCurrent {
+    display: hidden;
+    visibility: none;
+}
+
+.chatMsgInput {
+    width: 80%;
+    background-color: #eaeef8;
+}
+
+.chatMsgs {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    height: 80vh;
+}
