@@ -127,19 +127,15 @@ const messageData = [
 const inviteData = [
     {
         sender: "joel",
-        senderEmail: "joel@gmail.com",
         recipient: "thomas",
-        date: new Date(),
-        accepted: false,
-        responded: false,
+        sendDate: new Date(),
+        status: "pending"
     },
     {
         sender: "brian",
-        senderEmail: "brian@qq.com",
         recipient: "thomas",
-        date: new Date(),
-        accepted: false,
-        responded: false
+        sendDate: new Date(),
+        status: "pending"
     }
 ]
 
@@ -174,11 +170,9 @@ const seedDB = async () => {
     for (let i = 0; i < inviteData.length; i++) {
         const invite = new Invite({
             sender: inviteData[i].sender,
-            senderEmail: inviteData[i].senderEmail,
             recipient: inviteData[i].recipient,
-            date: inviteData[i].date,
-            accepted: inviteData[i].accepted,
-            responded: inviteData[i].responded
+            sendDate: inviteData[i].sendDate,
+            status: inviteData[i].status
         })
         await invite.save()
     }

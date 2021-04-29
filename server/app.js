@@ -3,8 +3,8 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const mongoose = require('mongoose');
-require('dotenv').config()
+const mongoose = require("mongoose");
+require("dotenv").config()
 
 console.log(provess.env.DB_PASS)
 
@@ -13,7 +13,7 @@ mongoose.connect(`mongodb+srv://wf1234:${process.env.DB_PASS}@cluster0.fk4em.mon
   useCreateIndex: true,
   useUnifiedTopology: true
 })
-.then((res) => console.log('connected to db'))
+.then((res) => console.log("connected to db"))
 .catch((err) => console.log(err))
 
 
