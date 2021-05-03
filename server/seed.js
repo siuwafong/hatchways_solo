@@ -195,7 +195,7 @@ const seedDB = async () => {
         await user.save()
     }
 
-
+    // add Message data 
     for (let i = 0; i < messageData.length; i++) {
         const sender = await User.findOne({name: messageData[i].sender})
         const recipient = await User.findOne({name: messageData[i].recipient})
@@ -209,10 +209,10 @@ const seedDB = async () => {
         await message.save();
     }
 
+    // add Invite data
     for (let i = 0; i < inviteData.length; i++) {
         const sender = await User.findOne({name: inviteData[i].sender})
         const recipient = await User.findOne({name: inviteData[i].recipient})
-        console.log(sender, recipient)
         const invite = new Invite({
             sender, 
             recipient, 
@@ -220,7 +220,10 @@ const seedDB = async () => {
             status: inviteData[i].status
         })
         await invite.save()
+        recipient.invites.push(invite)
+        await recipient.save()
     }
+
 }
 
 seedDB().then(() => {
