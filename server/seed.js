@@ -214,8 +214,8 @@ const seedDB = async () => {
         const sender = await User.findOne({name: inviteData[i].sender})
         const recipient = await User.findOne({name: inviteData[i].recipient})
         const invite = new Invite({
-            sender, 
-            recipient, 
+            sender,
+            recipient,
             sendDate: inviteData[i].sendDate,
             status: inviteData[i].status
         })

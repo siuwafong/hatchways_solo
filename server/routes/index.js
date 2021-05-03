@@ -12,8 +12,8 @@ router.get("/welcome", function (req, res, next) {
 router.get("/user/:id/invitations", async (req, res, next) => {
   const { id } = req.params
   try {
-    const user = await User.findById(id).populate('invites')
-    res.json(user.invites)
+    const invites = await Invite.find({recipient: id}).populate('sender')
+    res.json(invites)
   } catch(err) {
     console.error(err.message);
     res.status(404).send('404 Not Found');
