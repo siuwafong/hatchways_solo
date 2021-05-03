@@ -22,22 +22,52 @@ const userData = [
         joinDate: new Date(2021, 04, 27)
     },
     {
-        name: "joel",
-        email: "joel@gmail.com",
-        friends: ["kevin"],
+        name: "santiago",
+        email: "santiago@yahoo.com",
+        friends: ["thomas", "chiumbo"],
+        joinDate: new Date(2021, 04, 27)
+    },
+    {
+        name: "chiumbo",
+        email: "chiumbo@gmail.com",
+        friends: ["thomas", "santiago"],
         joinDate: new Date(2021, 03, 29)
     }, 
     {
-        name: "kevin",
-        email: "kevin@outlook.com",
-        friends: ["joel"],
+        name: "hualing",
+        email: "hualing@outlook.com",
+        friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 03, 30)
     },
     {
-        name: "brian",
-        email: "brian@qq.com",
-        friends: [],
+        name: "ashanti",
+        email: "ashanti@qq.com",
+        friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 04, 17)
+    },
+    {
+        name: "julia",
+        email: "julia@xyz.com",
+        friends: ["thomas", "ashanti", "hualing", "cheng"],
+        joinDate: new Date(2021, 05, 01)
+    },
+    {
+        name: "cheng",
+        email: "cheng@abc.ca",
+        friends: ["thomas", "julia,", "ashanti", "hualing"],
+        name: new Date(2021, 04, 30)
+    },
+    {
+        name: "brian",
+        email: "brianbb@hatchways.io",
+        friends: [],
+        joinDate: new Date(2021, 05, 02)
+    },
+    {
+        name: "joel",
+        email: "joel@apple.com",
+        friends: [],
+        joinDate: new Date(2021, 04, 28)
     }
 ]
 
@@ -145,21 +175,34 @@ const seedDB = async () => {
     await Message.deleteMany({})
     await Invite.deleteMany({})
 
+    // add User data (without friends)
     for (let i = 0; i < userData.length; i++) {
         const user = new User({
             name: userData[i].name,
             email: userData[i].email,
-            friends: userData[i].friends,
+            // friends: userData[i].friends,
             joinDate: userData[i].joinDate
         })
         await user.save();
     }
     
+    // add User data (friends)
+    for (let i = 0; i < userData.length; i++) {
+        const user = await User.findOne({name: userData[i].name})
+        for (let j = 0; j < userData[i].friends.length; j++) {
+            const friend = await User.findOne({ name: userData[i].friends[j] })
+            user.friends.push(friend)
+        }
+        await user.save()
+    }
+
 
     for (let i = 0; i < messageData.length; i++) {
+        const sender = await User.findOne({name: messageData[i].sender})
+        const recipient = await User.findOne({name: messageData[i].recipient})
         const message = new Message({
-            sender: messageData[i].sender,
-            recipient: messageData[i].recipient,
+            sender,
+            recipient,
             type: messageData[i].type,
             content: messageData[i].content,
             read: messageData[i].read
@@ -168,12 +211,16 @@ const seedDB = async () => {
     }
 
     for (let i = 0; i < inviteData.length; i++) {
+        const sender = await User.findOne({name: inviteData[i].sender})
+        const recipient = await User.findOne({name: inviteData[i].recipient})
+        console.log(sender, recipient)
         const invite = new Invite({
-            sender: inviteData[i].sender,
-            recipient: inviteData[i].recipient,
+            sender, 
+            recipient, 
             sendDate: inviteData[i].sendDate,
             status: inviteData[i].status
         })
+        console.log(invite)
         await invite.save()
     }
 }
