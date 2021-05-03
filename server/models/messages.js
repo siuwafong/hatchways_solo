@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-
 const Schema = mongoose.Schema
 
 const MessageSchema = new Schema({
@@ -13,7 +12,10 @@ const MessageSchema = new Schema({
         ref: "User",
         required: true
     },
-    type: String,
+    type: {
+        type: String,
+        enum: ["msg", "img"]
+    },
     content: {
         type: String,
         required: true

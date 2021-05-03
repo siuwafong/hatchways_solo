@@ -180,7 +180,6 @@ const seedDB = async () => {
         const user = new User({
             name: userData[i].name,
             email: userData[i].email,
-            // friends: userData[i].friends,
             joinDate: userData[i].joinDate
         })
         await user.save();
@@ -220,7 +219,6 @@ const seedDB = async () => {
             sendDate: inviteData[i].sendDate,
             status: inviteData[i].status
         })
-        console.log(invite)
         await invite.save()
     }
 }
