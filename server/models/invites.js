@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-
 const Schema = mongoose.Schema
 
 const InviteSchema = new Schema({
@@ -12,7 +11,10 @@ const InviteSchema = new Schema({
         ref: "User",
         required: true
     },
-    status: String,
+    status: {
+        type: String,
+        enum: ["pending", "declined", "accepted"]
+    },
     sendDate: Date
 }, { timestamps: true })
 
