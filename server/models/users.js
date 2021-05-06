@@ -11,6 +11,10 @@ const UserSchema = new Schema ({
         required: true
     },
     joinDate: Date,
+    image: {
+        url: String,
+        filename: String
+    },
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     invites: [{ type: Schema.Types.ObjectId, ref: 'Invite'}]
 }, { timestamps: true })

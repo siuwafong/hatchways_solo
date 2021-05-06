@@ -4,6 +4,8 @@ const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
+const multer = require('multer')
+
 const { userSchema, messageSchema, inviteSchema } = require('./schemas.js')
 require("dotenv").config()
 
@@ -29,8 +31,18 @@ app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
+// prevent CORS error
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
+  next();
+})
+
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -80,5 +92,6 @@ const validateInvite = (req, res, next) => {
       next()
   }
 }
+
 
 module.exports = app;
