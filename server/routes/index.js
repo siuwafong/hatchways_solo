@@ -9,7 +9,6 @@ router.get("/welcome", function (req, res, next) {
   res.status(200).send({ welcomeMessage: "Step 1 (completed)" });
 });
 
-
 router.get("/user/:id/invitations", async (req, res, next) => {
   const { id } = req.params
   try {
@@ -65,9 +64,6 @@ router.get("/user/:id/conversations", async (req, res, next) => {
     res.status(404).send('404 Not Found');
   }
 })
-
-
-
 
 
 module.exports = router;
