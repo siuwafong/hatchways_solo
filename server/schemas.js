@@ -6,10 +6,8 @@ module.exports.userSchema = Joi.object({
         email: Joi.string().required(),
         joinDate: Joi.date().less('now'),
         friends: Joi.array().items(Joi.string()),
-        image: Joi.object({
-            url: Joi.string(),
-            filename: Joi.string()
-        })
+        image: Joi.string(),
+        status: Joi.string()
     }).required()
 })
 

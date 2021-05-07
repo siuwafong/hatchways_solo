@@ -12,8 +12,13 @@ const UserSchema = new Schema ({
     },
     joinDate: Date,
     image: {
-        url: String,
-        filename: String
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ["Online", "Away"],
+        required: true
     },
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     invites: [{ type: Schema.Types.ObjectId, ref: 'Invite'}]

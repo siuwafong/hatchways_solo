@@ -24,100 +24,80 @@ const userData = [
         email: "thomas@gmail.com",
         friends: ["santiago", "chiumbo", "hualing", "ashanti", "julia", "cheng"],
         joinDate: new Date(2021, 04, 27),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_02_vdyeqo.png",
-            filename: "hatchways/profile_02_vdyeqo"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_02_vdyeqo.png",
+        status: "Online"
     },
     {
         name: "santiago",
         email: "santiago@yahoo.com",
         friends: ["thomas", "chiumbo"],
         joinDate: new Date(2021, 04, 27),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_03_xhyf8b.png",
-            filename: "hatchways/profile_03_xhyf8b.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_03_xhyf8b.png",
+        status: "Online"
     },
     {
         name: "chiumbo",
         email: "chiumbo@gmail.com",
         friends: ["thomas", "santiago"],
         joinDate: new Date(2021, 03, 29),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_06_mvlnqr.png",
-            filename: "hatchways/profile_06_mvlnqr.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_06_mvlnqr.png",
+        status: "Online"
     }, 
     {
         name: "hualing",
         email: "hualing@outlook.com",
         friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 03, 30),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_07_vuga0d.png",
-            filename: "hatchways/profile_07_vuga0d.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_07_vuga0d.png",
+        status: "Away"
     },
     {
         name: "ashanti",
         email: "ashanti@qq.com",
         friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 04, 17),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_04_bjfrhv.png",
-            filename: "hatchways/profile_04_bjfrhv.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_04_bjfrhv.png",
+        status: "Away"
     },
     {
         name: "julia",
         email: "julia@xyz.com",
-        friends: ["thomas", "ashanti", "hualing", "cheng"],
+        friends: ["thomas", "ashanti", "hualing"],
         joinDate: new Date(2021, 05, 01),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_01_ogn13x.png",
-            filename: "hatchways/profile_01_ogn13x.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_01_ogn13x.png",
+        status: "Away"
     },
     {
         name: "cheng",
         email: "cheng@abc.ca",
-        friends: ["thomas", "julia,", "ashanti", "hualing"],
-        name: new Date(2021, 04, 30),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_05_r2hsk8.png",
-            filename: "hatchways/profile_05_r2hsk8.png"
-        }
+        friends: ["thomas", "ashanti", "hualing"],
+        joinDate: new Date(2021, 04, 30),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_05_r2hsk8.png",
+        status: "Online"
     },
     {
         name: "brian",
         email: "brianbb@hatchways.io",
         friends: [],
         joinDate: new Date(2021, 05, 02),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-            filename: "hatchways/dummy_z3twvc.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
     },
     {
         name: "joel",
         email: "joel@apple.com",
         friends: [],
         joinDate: new Date(2021, 04, 28),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-            filename: "hatchways/dummy_z3twvc.png"
-        }
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
     },
     {
         name: "manami",
         email: "manami@yahoo.jp",
         friends: [],
         joinDate: new Date(2021, 05, 03),
-        image: {
-            url: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-            filename: "hatchways/dummy_z3twvc.png"
-        }
+        image:  "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
     }
 ]
 
@@ -150,8 +130,8 @@ const messageData = [
         sender: "thomas",
         recipient: "santiago",
         type: "img",
-        content: "msg_example_x3ryir.png",
-        sendDate: new Date(2021, 04, 27, 10, 45, 0), 
+        content: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/msg_example_x3ryir.png",
+        sendDate: new Date(2021, 04, 27, 10, 58, 0), 
         read: false
     },
     {
@@ -175,7 +155,7 @@ const messageData = [
         recipient: "thomas",
         type: "msg",
         content: "How's it going?",
-        sendDate: new Date(2021, 04, 27, 10, 45, 0), 
+        sendDate: new Date(2021, 04, 27, 10, 46, 0), 
         read: false
     },
     {
@@ -183,14 +163,14 @@ const messageData = [
         recipient: "thomas",
         type: "msg",
         content: "Wanna hang out?",
-        sendDate: new Date(2021, 04, 27, 11, 45, 0), 
+        sendDate: new Date(2021, 04, 27, 11, 47, 0), 
         read: false
     },
     {
         sender: "ashanti",
         recipient: "thomas",
         type: "img",
-        content: "msg_example_x3ryir.png",
+        content: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/msg_example_x3ryir.png",
         sendDate: new Date(2021, 04, 27, 10, 45, 0), 
         read: true
     },
@@ -236,7 +216,9 @@ const seedDB = async () => {
         const user = new User({
             name: userData[i].name,
             email: userData[i].email,
-            joinDate: userData[i].joinDate
+            joinDate: userData[i].joinDate,
+            status: userData[i].status,
+            image: userData[i].image
         })
         await user.save();
     }
@@ -260,7 +242,8 @@ const seedDB = async () => {
             recipient,
             type: messageData[i].type,
             content: messageData[i].content,
-            read: messageData[i].read
+            read: messageData[i].read,
+            sendDate: messageData[i].sendDate
         })
         await message.save();
     }

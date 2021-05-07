@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     }
 })
 
-const ChatMsg = ({userImg, type, time, content, username, direction}) => {
+const ChatMsg = ({userImg, type, sendDate, content, username, direction}) => {
 
     const classes = useStyles()
 
@@ -22,7 +22,7 @@ const ChatMsg = ({userImg, type, time, content, username, direction}) => {
     ? 
         <Grid className="sentMsg">
             <Typography>
-                {time}
+                {sendDate}
             </Typography>
             {type === "msg" 
             ? 
@@ -35,7 +35,7 @@ const ChatMsg = ({userImg, type, time, content, username, direction}) => {
             <img className="receivedMsgPic" src={userImg} alt="friendPic" />
             <Grid className="receivedMsgContent">
                 <Grid>
-                    <Typography>{username} {time}</Typography>
+                    <Typography>{username} {sendDate}</Typography>
                 </Grid>
                 {type === "msg" 
                 ? 
