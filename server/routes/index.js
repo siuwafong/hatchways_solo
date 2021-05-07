@@ -38,12 +38,6 @@ router.post("/user/:recipient/markread/:sender", async (req, res, next) => {
   const { recipient, sender } = req.params
   console.log(recipient, sender)
   try {
-    // const readMessages = await Message.find({
-    //   $and: [
-    //     { recipient: recipient},
-    //     { sender: sender}
-    //   ]
-    // })
     await Message.updateMany({ 
       $and: [
         { recipient: recipient},
