@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 const User = require('./models/users')
 const Invite = require('./models/invites')
 const Message = require('./models/messages')
+const multer = require('multer')
+const { storage } = require('./cloudinary')
+const upload = multer({ storage })
+
 require('dotenv').config()
 
 
@@ -19,55 +23,81 @@ const userData = [
         name: "thomas",
         email: "thomas@gmail.com",
         friends: ["santiago", "chiumbo", "hualing", "ashanti", "julia", "cheng"],
-        joinDate: new Date(2021, 04, 27)
+        joinDate: new Date(2021, 04, 27),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_02_vdyeqo.png",
+        status: "Online"
     },
     {
         name: "santiago",
         email: "santiago@yahoo.com",
         friends: ["thomas", "chiumbo"],
-        joinDate: new Date(2021, 04, 27)
+        joinDate: new Date(2021, 04, 27),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_03_xhyf8b.png",
+        status: "Online"
     },
     {
         name: "chiumbo",
         email: "chiumbo@gmail.com",
         friends: ["thomas", "santiago"],
-        joinDate: new Date(2021, 03, 29)
+        joinDate: new Date(2021, 03, 29),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_06_mvlnqr.png",
+        status: "Online"
     }, 
     {
         name: "hualing",
         email: "hualing@outlook.com",
         friends: ["thomas", "julia", "cheng"],
-        joinDate: new Date(2021, 03, 30)
+        joinDate: new Date(2021, 03, 30),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_07_vuga0d.png",
+        status: "Away"
     },
     {
         name: "ashanti",
         email: "ashanti@qq.com",
         friends: ["thomas", "julia", "cheng"],
-        joinDate: new Date(2021, 04, 17)
+        joinDate: new Date(2021, 04, 17),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_04_bjfrhv.png",
+        status: "Away"
     },
     {
         name: "julia",
         email: "julia@xyz.com",
-        friends: ["thomas", "ashanti", "hualing", "cheng"],
-        joinDate: new Date(2021, 05, 01)
+        friends: ["thomas", "ashanti", "hualing"],
+        joinDate: new Date(2021, 05, 01),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_01_ogn13x.png",
+        status: "Away"
     },
     {
         name: "cheng",
         email: "cheng@abc.ca",
-        friends: ["thomas", "julia,", "ashanti", "hualing"],
-        name: new Date(2021, 04, 30)
+        friends: ["thomas", "ashanti", "hualing"],
+        joinDate: new Date(2021, 04, 30),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_05_r2hsk8.png",
+        status: "Online"
     },
     {
         name: "brian",
         email: "brianbb@hatchways.io",
         friends: [],
-        joinDate: new Date(2021, 05, 02)
+        joinDate: new Date(2021, 05, 02),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
     },
     {
         name: "joel",
         email: "joel@apple.com",
         friends: [],
-        joinDate: new Date(2021, 04, 28)
+        joinDate: new Date(2021, 04, 28),
+        image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
+    },
+    {
+        name: "manami",
+        email: "manami@yahoo.jp",
+        friends: [],
+        joinDate: new Date(2021, 05, 03),
+        image:  "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
+        status: "Online"
     }
 ]
 
@@ -100,8 +130,8 @@ const messageData = [
         sender: "thomas",
         recipient: "santiago",
         type: "img",
-        content: "photo",
-        sendDate: new Date(2021, 04, 27, 10, 45, 0), 
+        content: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/msg_example_x3ryir.png",
+        sendDate: new Date(2021, 04, 27, 10, 58, 0), 
         read: false
     },
     {
@@ -125,7 +155,7 @@ const messageData = [
         recipient: "thomas",
         type: "msg",
         content: "How's it going?",
-        sendDate: new Date(2021, 04, 27, 10, 45, 0), 
+        sendDate: new Date(2021, 04, 27, 10, 46, 0), 
         read: false
     },
     {
@@ -133,14 +163,14 @@ const messageData = [
         recipient: "thomas",
         type: "msg",
         content: "Wanna hang out?",
-        sendDate: new Date(2021, 04, 27, 11, 45, 0), 
+        sendDate: new Date(2021, 04, 27, 11, 47, 0), 
         read: false
     },
     {
         sender: "ashanti",
         recipient: "thomas",
         type: "img",
-        content: "photo",
+        content: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/msg_example_x3ryir.png",
         sendDate: new Date(2021, 04, 27, 10, 45, 0), 
         read: true
     },
@@ -166,6 +196,12 @@ const inviteData = [
         recipient: "thomas",
         sendDate: new Date(),
         status: "pending"
+    },
+    {
+        sender: "thomas",
+        recipient: "manami",
+        sendDate: new Date(),
+        status: "pending"
     }
 ]
 
@@ -180,7 +216,9 @@ const seedDB = async () => {
         const user = new User({
             name: userData[i].name,
             email: userData[i].email,
-            joinDate: userData[i].joinDate
+            joinDate: userData[i].joinDate,
+            status: userData[i].status,
+            image: userData[i].image
         })
         await user.save();
     }
@@ -204,7 +242,8 @@ const seedDB = async () => {
             recipient,
             type: messageData[i].type,
             content: messageData[i].content,
-            read: messageData[i].read
+            read: messageData[i].read,
+            sendDate: messageData[i].sendDate
         })
         await message.save();
     }
