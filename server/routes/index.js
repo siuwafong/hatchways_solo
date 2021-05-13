@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const User = require("../models/users")
 const Invite = require('../models/invites')
 const Message = require('../models/messages')
+const dayjs = require('dayjs')
 
 router.get("/welcome", function (req, res, next) {
   res.status(200).send({ welcomeMessage: "Step 1 (completed)" });
@@ -35,7 +36,6 @@ router.get("/user/:id/contacts", async (req, res, next) => {
 
 router.post("/user/:recipient/markread/:sender", async (req, res, next) => {
   const { recipient, sender } = req.params
-  console.log(recipient, sender)
   try {
     await Message.updateMany({ 
       $and: [
@@ -59,6 +59,77 @@ router.get("/user/:id/conversations", async (req, res, next) => {
       ]
     }).populate('sender').populate('recipient')
     res.json(messages)
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
+router.post("/user/:id/searchemail", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    if (req.body.email) {
+      const matches = await User.find({
+        $and: [
+          { email: { $regex: req.body.email }},
+          { _id: { $ne: id}}
+        ]
+      })
+      res.json(matches)
+    } 
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
+router.post("/user/:id/sendinvite", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const invite = new Invite({
+      sender: id,
+      recipient: req.body.contactId,
+      sendDate: dayjs(),
+      status: "pending"
+    })
+    await invite.save()
+    res.json(invite)
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
+router.post("/user/:id/ignoreinvite", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    await Invite.updateOne({
+      sender: req.body.contactId,
+      recipient: id
+    }, { status: "declined" })
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
+router.delete("/user/:id/acceptinvite", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const invite = await Invite.find({
+      sender: req.body.contactId,
+      recipient: id
+    })
+    await Invite.findOneAndDelete({ _id: invite._id})
+    await User.findByIdAndUpdate({
+      _id : id
+    }, { $addToSet: { friends: req.body.contactId }})
+    await User.findByIdAndUpdate({
+      _id: req.body.contactId
+    }, { $addToSet: { friends: id }})
+    const newFriend = await User.find({ _id: req.body.contactId })
+    console.log(newFriend)
+    res.json(newFriend)
   } catch (err) {
     console.error(err.message);
     res.status(404).send('404 Not Found');
