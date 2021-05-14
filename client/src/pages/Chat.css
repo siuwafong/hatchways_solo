@@ -1,6 +1,7 @@
 .chatContainer {
     display: flex;
     flex-direction: row;
+    max-height: 100vh;
 }
 
 .chatListContainer {
@@ -36,6 +37,7 @@
 .currentChatContainer {
     width: 100%;
     flex-direction: column;
+    max-height: 80% 
 }
 
 
@@ -46,6 +48,7 @@
     height: 80px;
     box-shadow: 2px 2px 3px 4px rgba(0, 0, 0, 0.05); 
     position: relative;
+    max-height: 10%;
 }
 
 .currentChatName {
@@ -90,12 +93,18 @@
 .chatMsgInput {
     width: 80%;
     background-color: #eaeef8;
+    max-height: 10%;
 }
 
 .chatMsgs {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: scroll;
+    overflow-y: scroll;
     height: 80vh;
+}
+
+.usersContainer {
+    overflow-y: scroll;
+    max-height: 70%
 }

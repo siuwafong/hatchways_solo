@@ -5,20 +5,20 @@ import SearchIcon from '@material-ui/icons/Search'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { MOCK_PROFILE } from '../utils/MockData'
+import { MOCK_PROFILE, url, userId } from '../utils/MockData'
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from "@cloudinary/base";
 import ChatMsg from '../components/ChatMsg'
 import dayjs from 'dayjs'
 import { v4 as uuidv4 } from 'uuid';
 import './Chat.css'
+import InvitationDialog from "../components/InvitationDialog";
 
 const Chat = () => {
 
     const [currentUser, setCurrentUser] = useState(MOCK_PROFILE)
     const [friends, setFriends] = useState([])
     const [filteredFriends, setFilteredFriends] = useState([])
-    const [invites, setInvites] = useState({})
     const [selectedChat, setSelectedChat] = useState(null)
     const [messages, setMessages] = useState(null)
     const [messageList, setMessageList] = useState([])
@@ -30,32 +30,6 @@ const Chat = () => {
         }
     })
 
-    const url = "localhost:3001"
-    const userId = "6094ab6e7bd7a01286ea225a"
-
-    useEffect(() => {        
-        let allInvites = {
-            sent: [],
-            received: []
-        }
-        // TODO - replace user id
-        fetch(`http://${url}/user/${userId}/invitations`)
-            .then((res) => res.json())
-            .then(data => data.map(invite => invite.recipient === userId 
-                ? allInvites.received.push({
-                    name: invite.sender.name,
-                    sendDate: invite.sendDate,
-                    id: uuidv4()
-                })
-                : allInvites.sent.push({
-                    name: invite.recipient.name,
-                    sendDate: invite.sendDate,
-                    id: uuidv4()
-                })
-            ))
-            .then(() => setInvites(allInvites))
-    }, [])
-
     useEffect(() => {
         let friends = []
 
@@ -64,7 +38,8 @@ const Chat = () => {
             .then(data => data[0].friends.map(item => friends.push(item)))
             .then(() => setFriends(friends))
             .then(() => setFilteredFriends(friends))
-    }, [])
+            .catch((err) => console.log(err))
+    }, []) 
 
     useEffect(() => {
         let allMessages = []        
@@ -73,7 +48,8 @@ const Chat = () => {
             .then(res => res.json())
             .then(data => data.map(message => allMessages.push(message)))
             .then(() => setMessageList(allMessages))
-    }, [selectedChat])
+            .catch((err) => console.log(err))
+    }, [selectedChat, friends, filteredFriends])
 
     const selectChat = (friendId) => {
         const selectedFriend = friends.find(friend => friend._id === friendId)
@@ -87,6 +63,10 @@ const Chat = () => {
         fetch(`http://${url}/user/${userId}/markread/${friendId}`, {
             method: "POST",
             credentials: "same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
         })
             
         setMessages(selectedMessages)
@@ -119,6 +99,12 @@ const Chat = () => {
 
     return (
         <Grid className="chatContainer">
+            <InvitationDialog
+                currentUser={currentUser}
+                friends={friends}
+                setFriends={setFriends}
+                setFilteredFriends={setFilteredFriends}
+            />
             <Grid className="chatListContainer">
                 <Grid className="currentUserContainer">
                     <Grid className="currentUserPicStatus">
@@ -148,7 +134,7 @@ const Chat = () => {
                 {filteredFriends.map(user => (
                     <Grid 
                         onClick={() => selectChat(user._id)}
-                        className={selectedChat !== null ? (selectedChat._id === user._id && `selectedChat`) : ""}
+                        className={selectedChat !== null ? selectedChat._id === user._id ? `selectedChat` : "" : ""}
                         key={user._id}
                     >
                         <User 

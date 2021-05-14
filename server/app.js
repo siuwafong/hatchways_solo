@@ -13,7 +13,6 @@ mongoose.connect(`mongodb+srv://wf1234:${process.env.DB_PASS}@cluster0.fk4em.mon
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
 })
 .then((res) => console.log("connected to db"))
 .catch((err) => console.log(err))

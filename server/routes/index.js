@@ -86,6 +86,7 @@ router.post("/user/:id/searchemail", async (req, res, next) => {
 router.post("/user/:id/sendinvite", async (req, res, next) => {
   try {
     const { id } = req.params
+    console.log(req.body.contactId)
     const invite = new Invite({
       sender: id,
       recipient: req.body.contactId,
@@ -113,14 +114,17 @@ router.post("/user/:id/ignoreinvite", async (req, res, next) => {
   }
 })
 
-router.delete("/user/:id/acceptinvite", async (req, res, next) => {
+router.post("/user/:id/acceptinvite", async (req, res, next) => {
   try {
     const { id } = req.params
     const invite = await Invite.find({
       sender: req.body.contactId,
       recipient: id
     })
-    await Invite.findOneAndDelete({ _id: invite._id})
+    await Invite.updateOne({
+      sender: req.body.contactId,
+      recipient: id
+    }, { status: "accepted" })
     await User.findByIdAndUpdate({
       _id : id
     }, { $addToSet: { friends: req.body.contactId }})
@@ -128,7 +132,6 @@ router.delete("/user/:id/acceptinvite", async (req, res, next) => {
       _id: req.body.contactId
     }, { $addToSet: { friends: id }})
     const newFriend = await User.find({ _id: req.body.contactId })
-    console.log(newFriend)
     res.json(newFriend)
   } catch (err) {
     console.error(err.message);
