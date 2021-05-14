@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
+export const url = "localhost:5000"
+export const userId = "609dcee77dfd4056460b6645"
+
 export const MOCK_PROFILE = {
     username: "thomas",
     img: "./assets/img/profile_02.png",

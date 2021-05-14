@@ -12,7 +12,7 @@ require("dotenv").config()
 mongoose.connect(`mongodb+srv://wf1234:${process.env.DB_PASS}@cluster0.fk4em.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
 .then((res) => console.log("connected to db"))
 .catch((err) => console.log(err))

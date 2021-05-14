@@ -196,12 +196,6 @@ const inviteData = [
         recipient: "thomas",
         sendDate: new Date(),
         status: "pending"
-    },
-    {
-        sender: "thomas",
-        recipient: "manami",
-        sendDate: new Date(),
-        status: "pending"
     }
 ]
 
