@@ -25,7 +25,9 @@ const userData = [
         friends: ["santiago", "chiumbo", "hualing", "ashanti", "julia", "cheng"],
         joinDate: new Date(2021, 04, 27),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_02_vdyeqo.png",
-        status: "Online"
+        status: "Online",
+        language: "English",
+        password: "123456"
     },
     {
         name: "santiago",
@@ -33,7 +35,9 @@ const userData = [
         friends: ["thomas", "chiumbo"],
         joinDate: new Date(2021, 04, 27),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_03_xhyf8b.png",
-        status: "Online"
+        status: "Online",
+        language: "Spanish",
+        password: "123456"
     },
     {
         name: "chiumbo",
@@ -41,7 +45,9 @@ const userData = [
         friends: ["thomas", "santiago"],
         joinDate: new Date(2021, 03, 29),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_06_mvlnqr.png",
-        status: "Online"
+        status: "Online",
+        language: "French",
+        password: "123456"
     }, 
     {
         name: "hualing",
@@ -49,7 +55,9 @@ const userData = [
         friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 03, 30),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_07_vuga0d.png",
-        status: "Away"
+        status: "Away",
+        language: "Chinese",
+        password: "123456"
     },
     {
         name: "ashanti",
@@ -57,7 +65,9 @@ const userData = [
         friends: ["thomas", "julia", "cheng"],
         joinDate: new Date(2021, 04, 17),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_04_bjfrhv.png",
-        status: "Away"
+        status: "Away",
+        language: "English",
+        password: "123456"
     },
     {
         name: "julia",
@@ -65,7 +75,9 @@ const userData = [
         friends: ["thomas", "ashanti", "hualing"],
         joinDate: new Date(2021, 05, 01),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265986/hatchways/profile_01_ogn13x.png",
-        status: "Away"
+        status: "Away",
+        language: "Russian",
+        password: "123456"
     },
     {
         name: "cheng",
@@ -73,7 +85,9 @@ const userData = [
         friends: ["thomas", "ashanti", "hualing"],
         joinDate: new Date(2021, 04, 30),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620265988/hatchways/profile_05_r2hsk8.png",
-        status: "Online"
+        status: "Online",
+        language: "Chinese",
+        password: "123456"
     },
     {
         name: "brian",
@@ -81,7 +95,9 @@ const userData = [
         friends: [],
         joinDate: new Date(2021, 05, 02),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-        status: "Online"
+        status: "Online",
+        language: "English",
+        password: "123456"
     },
     {
         name: "joel",
@@ -89,7 +105,9 @@ const userData = [
         friends: [],
         joinDate: new Date(2021, 04, 28),
         image: "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-        status: "Online"
+        status: "Online",
+        language: "French",
+        password: "123456"
     },
     {
         name: "manami",
@@ -97,7 +115,9 @@ const userData = [
         friends: [],
         joinDate: new Date(2021, 05, 03),
         image:  "https://res.cloudinary.com/dmf6tpe7e/image/upload/v1620268656/hatchways/dummy_z3twvc.png",
-        status: "Online"
+        status: "Online",
+        language: "Japanese",
+        password: "123456"
     }
 ]
 
@@ -212,7 +232,9 @@ const seedDB = async () => {
             email: userData[i].email,
             joinDate: userData[i].joinDate,
             status: userData[i].status,
-            image: userData[i].image
+            image: userData[i].image,
+            password: userData[i].password,
+            language: userData[i].language
         })
         await user.save();
     }

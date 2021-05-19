@@ -20,6 +20,14 @@ const UserSchema = new Schema ({
         enum: ["Online", "Away"],
         required: true
     },
+    language: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     invites: [{ type: Schema.Types.ObjectId, ref: 'Invite'}]
 }, { timestamps: true })

@@ -133,13 +133,13 @@ const Login = () => {
                 <p className="loginForgotMsg">
                     Forgot?
                 </p>
-                <Button 
+                <LoginButton 
                     type="submit" 
                     className="loginBtn"
                     style={{fontSize: "1.1rem"}}
                 >
                     Login
-                </Button>
+                </LoginButton>
             </form>
 
             <Background />

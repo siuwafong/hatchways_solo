@@ -7,9 +7,9 @@ import { DebounceInput } from 'react-debounce-input';
 import FoundContact from '../components/FoundContact'
 import { url, userId } from '../utils/MockData'
 
-const InvitationDialog = ( {setFilteredFriends, currentUser, friends, setFriends} ) => {
+const InvitationDialog = ( {setFilteredFriends, friends, setFriends, letOpen} ) => {
 
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(letOpen)
     const [friendEmail, setFriendEmail] = useState("")
     const [validEmail, setValidEmail] = useState(true)
     const [foundContacts, setFoundContacts] = useState([])
@@ -93,7 +93,7 @@ const InvitationDialog = ( {setFilteredFriends, currentUser, friends, setFriends
             <React.Fragment>
                 <Grid container direction="row" justify="space-between" alignItems="flex-start">
                     <DialogTitle>
-                        Invite a Friend
+                        Find a Friend
                     </DialogTitle>
                     <IconButton onClick={handleClose}>
                         <CloseIcon />
@@ -101,7 +101,7 @@ const InvitationDialog = ( {setFilteredFriends, currentUser, friends, setFriends
                 </Grid>
                 <DialogContent>
                     <DialogContentText>
-                        Enter your friend's email and we will send them an invite to join.
+                        Find a friend by entering their email.
                     </DialogContentText>
                     <DebounceInput
                         onChange={(e) => handleChange(e)}
