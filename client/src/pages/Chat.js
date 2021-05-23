@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import './Chat.css'
 import InvitationDialog from "../components/InvitationDialog";
 import SetttingsDialog from "../components/SettingsDialog"
+import EmailDialog from "../components/EmailDialog"
 
 const Chat = () => {
 
@@ -108,7 +109,7 @@ const Chat = () => {
     return (
         <Grid className="chatContainer">
             <SetttingsDialog 
-                letOpen={true}
+                letOpen={false}
                 name={currentUser.name}
                 password={currentUser.password}
                 image={currentUser.image}
@@ -122,6 +123,10 @@ const Chat = () => {
                 setFriends={setFriends}
                 setFilteredFriends={setFilteredFriends}
                 letOpen={false}
+            />
+            <EmailDialog 
+                currentUser={currentUser}
+                letOpen={true}
             />
             <Grid className="chatListContainer">
                 <Grid className="currentUserContainer">

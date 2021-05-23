@@ -114,6 +114,7 @@ const Login = () => {
                             type: "email",
                             payload: e.target.value
                         })}
+                        value={formState.email.value}
                         required
                     />
                 </Grid>
@@ -127,6 +128,7 @@ const Login = () => {
                             payload: e.target.value
                         })}
                         placeholder="Input your password here"
+                        value={formState.password.value}
                         required
                     />
                 </Grid>

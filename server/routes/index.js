@@ -207,10 +207,8 @@ router.post("/invite/:id/email", async (req, res, next) => {
             <p>
               Sign up now for LangExchange and start chatting with other people in other languages!
             <p>
-            <a href=""> 
-              <buttton> 
+            <a href="www.google.ca"> 
                 Sign up 
-              </button>
             </a>
             `
     }
