@@ -20,10 +20,6 @@ import { languages, url, userId } from "../utils/MockData"
 import axios from "axios"
 import DropZone from "./DropZone"
 
-// const initFunc = (initialValues) => {
-//   return initialValues
-// }
-
 const initialFormState = {
   password: {
     value: "",
@@ -88,10 +84,8 @@ const formReducer = (state, action) => {
           },
         }
       }
-
     case "new":
       return action.payload
-      // return initFunc(action.payload)
     default:
       return state
   }

@@ -62,11 +62,17 @@ const Chat = () => {
     const selectChat = (friendId) => {
         const selectedFriend = friends.find(friend => friend._id === friendId)
         setSelectedChat(selectedFriend)
-        let selectedMessages = messageList.filter(message => 
-            (message.recipient.name === selectedFriend.name && message.sender.name === currentUser.name) 
-            || 
-            (message.recipient.name === currentUser.name && message.sender.name === selectedFriend.name )
-            )
+
+        let selectedMessages = messageList.filter(message => {
+          const isRecipientSelectedFriend = message.recipient.name === selectedFriend.name;
+          const isSenderCurrentUser = message.sender.name === currentUser.name;
+          const isRecipientCurrentUser = message.recipient.name === currentUser.name;
+          const isSenderSelectedFriend = message.sender.name === selectedFriend.name;
+          const isRecipientFriendAndSenderUser = isRecipientSelectedFriend && isSenderCurrentUser;
+          const isRecipientUserAndSenderFriend = isRecipientCurrentUser && isSenderSelectedFriend;
+
+          return (isRecipientFriendAndSenderUser || isRecipientUserAndSenderFriend)
+        })
         selectedMessages.sort((a, b) => a.sendDate - b.sendDate)
         fetch(`http://${url}/user/${userId}/markread/${friendId}`, {
             method: "POST",
