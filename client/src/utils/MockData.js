@@ -23,7 +23,6 @@ export const languages = [
     "Turkish",
     "Bengali",
     "Indonesian",
-    "Vietnamese",
     "Polish"
 ]
 

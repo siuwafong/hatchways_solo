@@ -6,8 +6,8 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { url, userId } from '../utils/MockData'
-import { AdvancedImage } from '@cloudinary/react';
-import { Cloudinary } from "@cloudinary/base";
+// import { AdvancedImage } from '@cloudinary/react';
+// import { Cloudinary } from "@cloudinary/base";
 import ChatMsg from '../components/ChatMsg'
 import dayjs from 'dayjs'
 import { v4 as uuidv4 } from 'uuid';
@@ -25,18 +25,18 @@ const Chat = () => {
     const [messageList, setMessageList] = useState([])
     const [newMsg, setNewMsg] = useState("")
 
-    const cld = new Cloudinary({
-        cloud: {
-            cloudName: 'dmf6tpe7e'
-        }
-    })
+    // const cld = new Cloudinary({
+    //     cloud: {
+    //         cloudName: 'dmf6tpe7e'
+    //     }
+    // })
 
     useEffect(() => {
         fetch(`http://${url}/user/${userId}`)
             .then(res => res.json())
             .then(data => setCurrentUser(data))
-            .catch(err => console.log(err))
-    }, [])
+            .catch(err => console.error(err))
+    }, [ ])
 
     useEffect(() => {
         let friends = []
@@ -46,7 +46,7 @@ const Chat = () => {
             .then(data => data[0].friends.map(item => friends.push(item)))
             .then(() => setFriends(friends))
             .then(() => setFilteredFriends(friends))
-            .catch((err) => console.log(err))
+            .catch((err) => console.error(err))
     }, []) 
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const Chat = () => {
             .then(res => res.json())
             .then(data => data.map(message => allMessages.push(message)))
             .then(() => setMessageList(allMessages))
-            .catch((err) => console.log(err))
+            .catch((err) => console.error(err))
     }, [selectedChat])
 
     const selectChat = (friendId) => {
