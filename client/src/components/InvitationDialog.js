@@ -18,13 +18,15 @@ import CloseIcon from "@material-ui/icons/Close"
 import validateEmail from "../utils/HelperFunctions"
 import { DebounceInput } from "react-debounce-input"
 import FoundContact from "../components/FoundContact"
-import { url, userId } from "../utils/MockData"
+import { url } from "../utils/MockData"
 
 const InvitationDialog = ({
   setFilteredFriends,
   friends,
   setFriends,
   letOpen,
+  currentUser,
+  token
 }) => {
   const [open, setOpen] = useState(letOpen)
   const [friendEmail, setFriendEmail] = useState("")
@@ -39,11 +41,16 @@ const InvitationDialog = ({
       received: [],
     }
     // TODO - replace user id
-    fetch(`http://${url}/user/${userId}/invitations`)
+    fetch(`http://${url}/user/${currentUser._id}/invitations`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": token
+      },
+    })
       .then(res => res.json())
       .then(data =>
         data.map(invite =>
-          invite.recipient === userId
+          invite.recipient === currentUser._id
             ? allInvites.received.push({
                 name: invite.sender.name,
                 sendDate: invite.sendDate,
@@ -72,7 +79,7 @@ const InvitationDialog = ({
       setValidEmail(validateEmail(formInput))
     }
 
-    fetch(`http://${url}/user/${userId}/searchemail`, {
+    fetch(`http://${url}/user/${currentUser._id}/searchemail`, {
       method: "POST",
       body: JSON.stringify({
         email: formInput,
@@ -80,6 +87,7 @@ const InvitationDialog = ({
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        "x-auth-token": token
       },
       credentials: "same-origin",
     })
@@ -114,7 +122,7 @@ const InvitationDialog = ({
         <Tab label="Received" />
       </Tabs>
       {tabValue === 0 ? (
-        <React.Fragment>
+        <>
           <Grid
             container
             direction="row"
@@ -164,9 +172,9 @@ const InvitationDialog = ({
               ))}
             </List>
           </DialogContent>
-        </React.Fragment>
+        </>
       ) : (
-        <React.Fragment>
+        <>
           <Grid
             container
             direction="row"
@@ -207,7 +215,7 @@ const InvitationDialog = ({
           <DialogActions>
             <Button onClick={handleClose}>Close</Button>
           </DialogActions>
-        </React.Fragment>
+        </>
       )}
     </Dialog>
   )

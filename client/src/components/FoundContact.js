@@ -132,7 +132,7 @@ const FoundContact = ({
       )}
       {relationship === `${name} has sent you an invite` &&
         type === "received" && (
-          <React.Fragment>
+          <>
             <Box mr={2}>
               <Button
                 variant="contained"
@@ -151,7 +151,7 @@ const FoundContact = ({
                 Accept
               </Button>
             </Box>
-          </React.Fragment>
+          </>
         )}
     </ListItem>
   )

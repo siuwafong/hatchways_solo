@@ -1,9 +1,13 @@
-import React, { useReducer } from "react"
+import React, { useState, useReducer } from "react"
 import "./Login.css"
 import { withStyles } from "@material-ui/core/styles"
-import { TextField, Grid, Button } from "@material-ui/core"
+import { TextField, Grid, Button, FormHelperText } from "@material-ui/core"
 import Background from "../components/Background"
 import { Link } from "react-router-dom"
+import axios from "axios"
+import styled from "styled-components"
+import { url } from '../utils/MockData'
+
 
 const SwitchButton = withStyles({
   root: {
@@ -25,6 +29,11 @@ const LoginButton = withStyles({
     color: "#FFFFFF",
   },
 })(Button)
+
+const StyledFormHelperText = styled(FormHelperText)`
+  margin-top: 10px;
+  color: #cc0000;
+`
 
 const formReducer = (state, action) => {
   switch (action.type) {
@@ -58,23 +67,28 @@ const initialFormState = {
   },
 }
 
-const validateEmail = email => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  return re.test(String(email).toLowerCase())
-}
-
-const Login = () => {
+const Login = ({...props}) => {
+  
   const [formState, formDispatch] = useReducer(formReducer, initialFormState)
+  const [loginError, setLoginError] = useState("")
 
-  const submitHandler = e => {
-    e.preventDefault()
-    formDispatch({
-      type: "login",
-      payload: {
-        email: formState.email,
-        password: formState.password,
-      },
+
+  const handleSubmit = (e) => {
+    const body = {
+      email: formState.email.value,
+      password: formState.password.value
+    }
+    axios.post(`http://${url}/login`, body, {
+      headers: {
+        "Content-Type": `application/json`,
+      }
     })
+    .then(res => res.data.errorMsg
+      ?
+    setLoginError(res.data.errorMsg)
+      :
+    props.history.push("/chat", res.data )
+    )
   }
 
   return (
@@ -86,7 +100,7 @@ const Login = () => {
         </SwitchButton>
       </Grid>
 
-      <form className="loginForm" onSubmit={submitHandler}>
+      <form className="loginForm">
         <h1>Welcome back!</h1>
         <Grid className="loginInput">
           <TextField
@@ -119,8 +133,11 @@ const Login = () => {
           />
         </Grid>
         <p className="loginForgotMsg">Forgot?</p>
+        <StyledFormHelperText>
+          {loginError}
+        </StyledFormHelperText>
         <LoginButton
-          type="submit"
+          onClick={(e) => handleSubmit(e)}
           className="loginBtn"
           style={{ fontSize: "1.1rem" }}
         >

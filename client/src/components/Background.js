@@ -10,7 +10,7 @@ const Background = () => {
       </Grid>
       <img
         className="backgroundImg"
-        src="./assets/img/login.png"
+        src="../assets/img/login.png"
         alt="backgroundImg"
       />
       <i className="far fa-comment-dots fa-7x"></i>

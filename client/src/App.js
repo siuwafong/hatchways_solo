@@ -15,7 +15,7 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <Switch>
-          <Route exact path="/signup" component={Signup} />
+          <Route exact path="/signup/:name" component={Signup} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/landing" component={LandingPage}  />
           <Route exact path="/chat" component={Chat} />

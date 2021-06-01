@@ -5,6 +5,7 @@ const Message = require("./models/messages")
 const multer = require("multer")
 const { storage } = require("./cloudinary")
 const upload = multer({ storage })
+const bcrypt = require("bcrypt")
 
 require("dotenv").config()
 
@@ -18,8 +19,8 @@ mongoose
     }
   )
   .then(res => console.log("connected to db"))
-  .catch(err => console.error(err)
-
+  .catch(err => console.error(err))
+  
 // Dummy Data
 const userData = [
   {
@@ -242,13 +243,14 @@ const seedDB = async () => {
 
   // add User data (without friends)
   for (let i = 0; i < userData.length; i++) {
+    const hashedPassword = await bcrypt.hash(userData[i].password, 12)
     const user = new User({
       name: userData[i].name,
       email: userData[i].email,
       joinDate: userData[i].joinDate,
       status: userData[i].status,
       image: userData[i].image,
-      password: userData[i].password,
+      password: hashedPassword,
       language: userData[i].language,
     })
     await user.save()

@@ -9,14 +9,12 @@ import {
   Button,
   IconButton,
   Grid,
-  InputBase,
   TextField,
   NativeSelect,
-  FormHelperText,
 } from "@material-ui/core"
 import CloseIcon from "@material-ui/icons/Close"
 import styled from "styled-components"
-import { languages, url, userId } from "../utils/MockData"
+import { languages, url } from "../utils/MockData"
 import axios from "axios"
 import DropZone from "./DropZone"
 
@@ -97,10 +95,6 @@ const SettingsHeading = styled(DialogContentText)`
   margin-top: 30px;
 `
 
-// const ImageErrorMsg = styled(FormHelperText)`
-//     color: #cc0000;
-// `
-
 const SettingsDialog = ({
   name,
   password,
@@ -109,22 +103,23 @@ const SettingsDialog = ({
   letOpen,
   currentUser,
   setCurrentUser,
+  token
 }) => {
   const [open, setOpen] = useState(letOpen)
   const [showPasswordSettings, setShowPasswordSettings] = useState(false)
   const [formState, formDispatch] = useReducer(formReducer, initialFormState)
   const [errorMsg, setErrorMsg] = useState("")
-
+  
   useEffect(() => {
     formDispatch({
       type: "new",
       payload: {
         password: {
-          value: password,
+          value: "",
           isValid: true,
         },
         confirmPassword: {
-          value: password,
+          value: "",
           isValid: true,
         },
         language: language,
@@ -135,7 +130,7 @@ const SettingsDialog = ({
         },
       },
     })
-  }, [password, name, language, image])
+  }, [name, language, image])
 
   const handleClose = () => {
     setOpen(false)
@@ -175,7 +170,7 @@ const SettingsDialog = ({
       if (formState.password.value !== password) {
         body["password"] = formState.password.value
       } else {
-        body["password"] = password
+        body["password"] = ""
       }
       if (formState.language !== language) {
         body["language"] = formState.language
@@ -184,12 +179,15 @@ const SettingsDialog = ({
       }
       if (Object.keys(body).length !== 0) {
         axios
-          .post(`http://${url}/user/${userId}/updateprofile`, body, {
+          .post(`http://${url}/user/${currentUser._id}/updateprofile`, body, {
             headers: {
               "Content-Type": `application/json`,
+              "x-auth-token": token
             },
           })
-          .then(res => setCurrentUser(res.data))
+          .then(res => {
+            setCurrentUser(res.data)
+          })
           .catch(err => console.error(err))
       }
     }
@@ -199,7 +197,7 @@ const SettingsDialog = ({
       data.append("name", "profileImage")
       data.append("file", formState.image.value)
       axios
-        .post(`http://${url}/user/${userId}/updateprofileimg`, data, {
+        .post(`http://${url}/user/${currentUser._id}/updateprofileimg`, data, {
           headers: {
             "Content-Type": `multipart/form-data`,
           },
@@ -234,7 +232,7 @@ const SettingsDialog = ({
           {showPasswordSettings === false ? `Change password` : `Cancel`}
         </Button>
         {showPasswordSettings === true && (
-          <React.Fragment>
+          <>
             <Grid>
               <TextField
                 label="New password"
@@ -266,25 +264,11 @@ const SettingsDialog = ({
                 error={errorMsg.length !== 0}
               />
             </Grid>
-          </React.Fragment>
+          </>
         )}
         <SettingsHeading>Edit your profile picture</SettingsHeading>
         <Grid className="imageContainer">
           <img src={image} className="userPic" alt="userPic" />
-          {/* <InputBase
-                        name="profileImage"
-                        accept=" .jpg, .png, .jpeg"
-                        className="imageSelect"
-                        type="file"
-                        onChange={(e) => formDispatch({
-                            type: "image",
-                            payload: e.target.files[0], 
-                        })}
-                        error={formState.image.error}
-                    /> */}
-          {/* <ImageErrorMsg>
-                        {formState.image.error === true && "Please upload a .png, .jpg, or .jpeg file"}
-                    </ImageErrorMsg> */}
           <DropZone formDispatch={formDispatch} />
         </Grid>
 
