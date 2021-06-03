@@ -14,7 +14,7 @@ import CloseIcon from "@material-ui/icons/Close"
 import { url } from '../utils/MockData'
 
 
-const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen, token }) => {
+const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen }) => {
   
   const [open, setOpen] = useState(letOpen)
   const [referralInvite, setRefferalInvite] = useState("")
@@ -31,7 +31,6 @@ const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen, token }) 
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "x-auth-token": token
         },
         body: JSON.stringify({
           contactId: referralInvite[0]

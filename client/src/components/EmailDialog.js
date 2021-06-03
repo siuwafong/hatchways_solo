@@ -6,7 +6,7 @@ import validateEmail from "../utils/HelperFunctions"
 import axios from "axios"
 import { url, userId } from '../utils/MockData'
 
-const EmailDialog = ({ currentUser, letOpen, token }) => {
+const EmailDialog = ({ currentUser, letOpen }) => {
 
     const [open, setOpen] = useState(letOpen)
     const [errorMsg, setErrorMsg] = useState(false)
@@ -22,7 +22,6 @@ const EmailDialog = ({ currentUser, letOpen, token }) => {
             axios.post(`http://${url}/invite/${userId}/email`, {email: friendEmail}, {
                 headers: {
                     'Content-Type': `application/json`,
-                    "x-auth-token": token
                 }
             })
         } else {

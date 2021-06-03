@@ -8,7 +8,7 @@ const dayjs = require("dayjs")
 const multer = require("multer")
 const { storage } = require("../cloudinary")
 const upload = multer({ storage })
-const { validateUser, validateMessage, validateInvite, testObject, requireLogin, auth } = require("../middleware")
+const { validateUser, validateMessage, validateInvite, testObject, requireLogin, auth, generateToken } = require("../middleware")
 require("dotenv").config()
 const sgMail = require("@sendgrid/mail")
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -22,6 +22,7 @@ router.get("/welcome", function (req, res, next) {
 
 // get user based on id
 router.get("/user/:id", auth, async (req, res, next) => {
+  console.log(req.cookies.token)
   const { id } = req.params
   try {
     const user = await User.findById(id)
@@ -286,7 +287,6 @@ router.post("/createaccount", validateUser, async (req, res, next) => {
           res.json({ token, newUserData })
         }
       )
-      // res.json({ newUserData })
     } else {
       if (existingUsers.length === 2) {
         res.json({errorMsg: "There are already users with the same email and username"})
@@ -309,22 +309,12 @@ router.post("/login", async (req, res, next) => {
     const { email, password } = req.body
     const user = await User.findOne({ email })
     const validUser = await bcrypt.compare(password, user.password)
-
     if (validUser) {
-      jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: 3600 * 24 * 7 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ 
-            _id: user._id,
-            newUser: false,
-            token
-           })
-        }
-      )
-      
+      await generateToken(res, user._id);
+      res.json({ 
+        _id: user._id,
+        newUser: false
+      })
     } else {
       res.json({errorMsg: "Incorrect username or password"})
     }

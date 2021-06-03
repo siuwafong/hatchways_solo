@@ -16,6 +16,7 @@ import EmailDialog from "../components/EmailDialog"
 import NewUserDialog from "../components/NewUserDialog"
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
+import axios from "axios"
 
 const Chat = ({...props}) => {
 
@@ -29,35 +30,39 @@ const Chat = ({...props}) => {
     const [anchorEl, setAnchorEl] = useState(null)
     const [openDialog, setOpenDialog] = useState(null)
     const [showSteps, setShowSteps] = useState(false)
-    const [token, setToken] = useState(props.location.state.token !== undefined ? props.location.state.token : localStorage.getItem("token"))
 
     const newUserId = props.location.state._id
     const referral = props.location.state.referral
     const newUser = props.location.state.newUser
     
-    useEffect(() => {
-      if (props.location.state.token !== undefined) {
-        localStorage.setItem("token", props.location.state.token)
-        setToken(props.location.state.token)
-      } else {
-        setToken(localStorage.getItem("token"))
-      }
-    }, [] )
 
 
+    // useEffect(() => {
+    //     fetch(`http://${url}/user/${newUserId}`, {
+    //       // credentials: "same-origin",
+    //       credentials: "include"
+    //     })
+    //         .then(res => res.json())
+    //         .then(data => setCurrentUser(data))
+    //         .then(() => {
+    //           referral !== undefined && setOpenDialog("NewUserDialog")
+    //         })
+    //         .catch(err => console.error(err))
+    // }, [])
+
     useEffect(() => {
-        fetch(`http://${url}/user/${newUserId}`, {
-          credentials: "same-origin",
-          headers: {
-            "x-auth-token": token
-          }
-        })
-            .then(res => res.json())
-            .then(data => setCurrentUser(data))
-            .then(() => {
-              referral !== undefined && setOpenDialog("NewUserDialog")
-            })
-            .catch(err => console.error(err))
+      axios.defaults.withCredentials = true
+      axios({
+        url:`http://${url}/user/${newUserId}`,
+        method: "get",
+        withCredentials: true,
+        headers: { crossDomain: true }
+      })
+      .then(res => setCurrentUser(res.data))
+      .then(() => {
+        referral !== undefined && setOpenDialog("NewUserDialog")
+      })
+      .catch(err => console.error(err))
     }, [])
 
     useEffect(() => {
@@ -65,9 +70,6 @@ const Chat = ({...props}) => {
 
         fetch(`http://${url}/user/${newUserId}/contacts`, {
           credentials: "same-origin",
-          headers: {
-            "x-auth-token": token
-          }
         })
             .then(res => res.json())
             .then(data => data[0].friends.map(item => friends.push(item)))
@@ -81,9 +83,6 @@ const Chat = ({...props}) => {
 
         fetch(`http://${url}/user/${newUserId}/conversations`, {
           credentials: "same-origin",
-          headers: {
-            "x-auth-token": token
-          }
         })
             .then(res => res.json())
             .then(data => data.map(message => allMessages.push(message)))
@@ -116,7 +115,6 @@ const Chat = ({...props}) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                // "x-auth-token": token
             },
         })
             
@@ -165,7 +163,6 @@ const Chat = ({...props}) => {
       .then(data => {
         if (data.logout === true) {
           props.history.push("/login") 
-          localStorage.removeItem("token")
         }
     })
     }
@@ -201,7 +198,6 @@ const Chat = ({...props}) => {
                 letOpen={true}
                 currentUser={currentUser}
                 setOpenDialog={setOpenDialog}
-                token={token}
               />
             }
             {openDialog === "settings" &&
@@ -214,7 +210,6 @@ const Chat = ({...props}) => {
                   setCurrentUser={setCurrentUser}
                   currentUser={currentUser}
                   setOpenDialog={setOpenDialog}
-                  token={token}
               />
             }
             {openDialog === "addFriends" &&
@@ -225,7 +220,6 @@ const Chat = ({...props}) => {
                   setFilteredFriends={setFilteredFriends}
                   letOpen={true}
                   setOpenDialog={setOpenDialog}
-                  token={token}
               />
             }
             {newUser === true && 

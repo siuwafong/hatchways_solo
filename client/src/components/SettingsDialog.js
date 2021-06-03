@@ -103,7 +103,6 @@ const SettingsDialog = ({
   letOpen,
   currentUser,
   setCurrentUser,
-  token
 }) => {
   const [open, setOpen] = useState(letOpen)
   const [showPasswordSettings, setShowPasswordSettings] = useState(false)
@@ -182,7 +181,6 @@ const SettingsDialog = ({
           .post(`http://${url}/user/${currentUser._id}/updateprofile`, body, {
             headers: {
               "Content-Type": `application/json`,
-              "x-auth-token": token
             },
           })
           .then(res => {

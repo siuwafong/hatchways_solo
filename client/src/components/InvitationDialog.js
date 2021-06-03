@@ -26,7 +26,6 @@ const InvitationDialog = ({
   setFriends,
   letOpen,
   currentUser,
-  token
 }) => {
   const [open, setOpen] = useState(letOpen)
   const [friendEmail, setFriendEmail] = useState("")
@@ -44,7 +43,6 @@ const InvitationDialog = ({
     fetch(`http://${url}/user/${currentUser._id}/invitations`, {
       headers: {
         "Content-Type": "application/json",
-        "x-auth-token": token
       },
     })
       .then(res => res.json())
@@ -87,7 +85,6 @@ const InvitationDialog = ({
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "x-auth-token": token
       },
       credentials: "same-origin",
     })

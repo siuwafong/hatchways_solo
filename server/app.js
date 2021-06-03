@@ -6,6 +6,7 @@ const logger = require("morgan")
 const mongoose = require("mongoose")
 require("dotenv").config()
 const passport = require("passport")
+const cors = require("cors")
 
 // connect to MongoDB
 mongoose
@@ -21,6 +22,7 @@ mongoose
   .then(res => console.log("connected to db"))
   .catch(err => console.error(err))
 
+
 // Set up router
 
 const indexRouter = require("./routes/index")
@@ -29,25 +31,34 @@ const pingRouter = require("./routes/ping")
 const { json, urlencoded } = express
 
 var app = express()
+app.use(cookieParser())
+// prevent CORS error
+const corsOptions = {
+  origin: true,
+  credentials:  true
+}
+
+app.use(cors(corsOptions))
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  )
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
+  res.setHeader("Access-Control-Allow-Credentials", "true")
+  next()
+})
+
 app.use(passport.initialize());
 app.use(passport.session())
 
 app.use(logger("dev"))
 app.use(json())
 app.use(urlencoded({ extended: false }))
-app.use(cookieParser())
 app.use(express.static(join(__dirname, "public")))
 
-// prevent CORS error
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*")
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-auth-token"
-  )
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
-  next()
-})
+
 
 app.use("/", indexRouter)
 app.use("/ping", pingRouter)
