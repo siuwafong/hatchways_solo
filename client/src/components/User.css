@@ -33,7 +33,9 @@
 
 .userPic {
     width: 60px;
+    height: 60px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .userNameMsg {
@@ -52,7 +54,7 @@
 
 .userMsg {
     margin: 0 0;
-    font-size: 0.8rem;
+    /* font-size: 0.8rem; */
 }
 
 .unreadContainer {
@@ -61,6 +63,7 @@
 
 .highlightUnreadMsg {
     font-weight: 800;
+    font-size: 2rem;
 }
 
 .unreadMsgDot {

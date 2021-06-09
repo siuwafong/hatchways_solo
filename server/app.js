@@ -4,7 +4,6 @@ const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-const multer = require('multer')
 
 const { userSchema, messageSchema, inviteSchema } = require('./schemas.js')
 require("dotenv").config()

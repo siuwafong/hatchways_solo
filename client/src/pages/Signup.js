@@ -29,16 +29,6 @@ const StyledButton = styled(Button)`
   }
 `;
 
-// const CreateButton = styled(Button)`
-//     border: 0px;
-//     border-radius: 3px;
-//     background-color: #3A8DFF;
-//     text-transform: capitalize;
-//     color: #FFFFFF;
-//     size: small;
-// `;
-
-
 
 const formReducer = (state, action) => {
     switch(action.type) {

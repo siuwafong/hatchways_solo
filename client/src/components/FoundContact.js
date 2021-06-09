@@ -10,7 +10,6 @@ import dayjs from "dayjs";
 const FoundContact = ({setFilteredFriends, friends, setFriends, foundContacts, invites, setInvites, image, name, id, type}) => {
 
     const [relationship, setRelationship] = useState("")
-    const [newFriend, setNewFriend] = useState("")
 
     const checkRelationship = name => {
         const contact = foundContacts.find(person => person.name === name)
@@ -28,7 +27,7 @@ const FoundContact = ({setFilteredFriends, friends, setFriends, foundContacts, i
     useEffect(() => checkRelationship(name), [name])
 
     const sendInvite = contactId => {
-        fetch(`http://${url}/user/${userId}/sendinvite`, {
+        fetch(`http://${url}/invite/${userId}/send`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -52,7 +51,7 @@ const FoundContact = ({setFilteredFriends, friends, setFriends, foundContacts, i
     }
 
     const ignoreInvite = contactId => {
-        fetch(`http://${url}/user/${userId}/ignoreinvite`, {
+        fetch(`http://${url}/invite/${userId}/reject`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -80,7 +79,7 @@ const FoundContact = ({setFilteredFriends, friends, setFriends, foundContacts, i
     }
 
     const acceptInvite = contactId => {
-        fetch(`http://${url}/user/${userId}/acceptinvite`, {
+        fetch(`http://${url}/invite/${userId}/approve`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',

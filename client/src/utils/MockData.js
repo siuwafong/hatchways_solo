@@ -1,7 +1,31 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export const url = "localhost:5000"
-export const userId = "609dcee77dfd4056460b6645"
+export const userId = "60a1c58a759696160e70fbdd"
+
+export const languages = [
+    "English",
+    "French",
+    "Spanish",
+    "Chinese",
+    "Japanese",
+    "Korean",
+    "Vietnamese",
+    "Italian",
+    "Portuguese",
+    "Arabic",
+    "Russian",
+    "Hindi",
+    "Swahili",
+    "Farsi",
+    "Urdu",
+    "German",
+    "Turkish",
+    "Bengali",
+    "Indonesian",
+    "Vietnamese",
+    "Polish"
+]
 
 export const MOCK_PROFILE = {
     username: "thomas",

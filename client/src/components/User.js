@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import "./User.css"
 import { Grid, Typography } from '@material-ui/core'
 
-const User = ({ username, profileImg, status, recentMsg, unreadMsgs }) => {
+const User = ({ name, profileImg, status, recentMsg, unreadMsgs }) => {
 
     return (
         <Grid className="userContainer">
@@ -11,8 +11,8 @@ const User = ({ username, profileImg, status, recentMsg, unreadMsgs }) => {
                 <Grid className={`statusDot ${status === "Online" ? "statusAvailable" : "statusAway"}` }></Grid> 
             </Grid>
             <Grid className="userNameMsg">
-                <Typography className="userName"> {username} </Typography> 
-                <Typography className={`userMsg ${unreadMsgs > 0 && 'highlightUnreadMsg'}`}> {recentMsg.type === "msg" ? recentMsg.content :  recentMsg.type === "img" ? "Sent photo" : ""} </Typography>
+                <Typography className="userName"> {name} </Typography> 
+                <Typography className={`highlightUnreadMsg userMsg `}> {recentMsg.type === "msg" ? recentMsg.content :  recentMsg.type === "img" ? "Sent photo" : ""} </Typography>
             </Grid>
             <Grid className={`unreadContainer ${unreadMsgs === 0 && 'hideUnreadMsgs'}`}>
                 <Grid className={`unreadMsgDot ${unreadMsgs > 9 && 'longUnreadMsgDot'}`}></Grid>
@@ -23,3 +23,6 @@ const User = ({ username, profileImg, status, recentMsg, unreadMsgs }) => {
 }
 
 export default User
+
+
+// ${unreadMsgs  > 0 ? 'highlightUnreadMsg' : ""}

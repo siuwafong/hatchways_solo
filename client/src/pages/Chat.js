@@ -5,7 +5,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { MOCK_PROFILE, url, userId } from '../utils/MockData'
+import { url, userId } from '../utils/MockData'
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from "@cloudinary/base";
 import ChatMsg from '../components/ChatMsg'
@@ -13,10 +13,12 @@ import dayjs from 'dayjs'
 import { v4 as uuidv4 } from 'uuid';
 import './Chat.css'
 import InvitationDialog from "../components/InvitationDialog";
+import SetttingsDialog from "../components/SettingsDialog"
+import EmailDialog from "../components/EmailDialog"
 
 const Chat = () => {
 
-    const [currentUser, setCurrentUser] = useState(MOCK_PROFILE)
+    const [currentUser, setCurrentUser] = useState("")
     const [friends, setFriends] = useState([])
     const [filteredFriends, setFilteredFriends] = useState([])
     const [selectedChat, setSelectedChat] = useState(null)
@@ -29,6 +31,13 @@ const Chat = () => {
             cloudName: 'dmf6tpe7e'
         }
     })
+
+    useEffect(() => {
+        fetch(`http://${url}/user/${userId}`)
+            .then(res => res.json())
+            .then(data => setCurrentUser(data))
+            .catch(err => console.log(err))
+    }, [])
 
     useEffect(() => {
         let friends = []
@@ -49,15 +58,15 @@ const Chat = () => {
             .then(data => data.map(message => allMessages.push(message)))
             .then(() => setMessageList(allMessages))
             .catch((err) => console.log(err))
-    }, [selectedChat, friends, filteredFriends])
+    }, [selectedChat])
 
     const selectChat = (friendId) => {
         const selectedFriend = friends.find(friend => friend._id === friendId)
         setSelectedChat(selectedFriend)
         let selectedMessages = messageList.filter(message => 
-            (message.recipient.name === selectedFriend.name && message.sender.name === currentUser.username) 
+            (message.recipient.name === selectedFriend.name && message.sender.name === currentUser.name) 
             || 
-            (message.recipient.name === currentUser.username && message.sender.name === selectedFriend.name )
+            (message.recipient.name === currentUser.name && message.sender.name === selectedFriend.name )
             )
         selectedMessages.sort((a, b) => a.sendDate - b.sendDate)
         fetch(`http://${url}/user/${userId}/markread/${friendId}`, {
@@ -89,7 +98,7 @@ const Chat = () => {
             sendDate: dayjs(),
             type: "msg",
             content: newMsg,
-            sender: currentUser.username,
+            sender: currentUser.name,
             recipient: selectedChat.name,
             read: false,
             id: uuidv4()
@@ -99,20 +108,34 @@ const Chat = () => {
 
     return (
         <Grid className="chatContainer">
+            <SetttingsDialog 
+                letOpen={false}
+                name={currentUser.name}
+                password={currentUser.password}
+                image={currentUser.image}
+                language={currentUser.language}
+                setCurrentUser={setCurrentUser}
+                currentUser={currentUser}
+            />
             <InvitationDialog
                 currentUser={currentUser}
                 friends={friends}
                 setFriends={setFriends}
                 setFilteredFriends={setFilteredFriends}
+                letOpen={false}
+            />
+            <EmailDialog 
+                currentUser={currentUser}
+                letOpen={true}
             />
             <Grid className="chatListContainer">
                 <Grid className="currentUserContainer">
                     <Grid className="currentUserPicStatus">
-                        <img className="userPic" src={currentUser.img} alt="userPic"/>
+                        <img className="userPic" src={currentUser.image} alt="userPic"/>
                         <Grid className={`statusDot ${currentUser.status === "Online" ? "statusAvailable" : "statusAway"} `}></Grid> 
                     </Grid>
                     <Grid className="userNameMsg">
-                        <p className="userName"> {currentUser.username} </p> 
+                        <p className="username"> {currentUser.name} </p> 
                     </Grid>
                     <MoreHorizIcon />
                 </Grid>
@@ -138,7 +161,7 @@ const Chat = () => {
                         key={user._id}
                     >
                         <User 
-                            username={user.name}
+                            name={user.name}
                             profileImg={user.image}
                             recentMsg={messageList.filter(message => message.sender.name === user.name).sort((a, b) => b.createdAt - a.createdAt)[0] || ""}
                             unreadMsgs={messageList.filter(message => message.sender.name === user.name).filter(message => message.read === false).length}
@@ -164,10 +187,10 @@ const Chat = () => {
                         <ChatMsg 
                             type={message.type}
                             username={message.sender.name}
-                            direction={message.sender.name === currentUser.username ? "sent" : "received"}
+                            direction={message.sender.name === currentUser.name ? "sent" : "received"}
                             content={message.content}
                             sendDate={dayjs(message.sendDate).format('hh:mma')}
-                            userImg={message.recipient.name === currentUser.username ? friends.filter(friend => friend.name === message.sender.name)[0].image : ""}
+                            userImg={message.recipient.name === currentUser.name ? friends.filter(friend => friend.name === message.sender.name)[0].image : ""}
                             key={message._id}
                         />
                     ))}

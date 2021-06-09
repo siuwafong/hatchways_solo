@@ -4,11 +4,28 @@ const mongoose = require("mongoose")
 const User = require("../models/users")
 const Invite = require('../models/invites')
 const Message = require('../models/messages')
-const dayjs = require('dayjs')
+const dayjs = require("dayjs")
+const multer = require("multer")
+const {storage} = require('../cloudinary')
+const upload = multer({ storage })
+require("dotenv").config()
+const sgMail = require("@sendgrid/mail")
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 router.get("/welcome", function (req, res, next) {
   res.status(200).send({ welcomeMessage: "Step 1 (completed)" });
 });
+
+router.get("/user/:id", async (req, res, next) => {
+  const { id } = req.params
+  try {
+    const user = await User.findById(id)
+    res.json(user)
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
 
 router.get("/user/:id/invitations", async (req, res, next) => {
   const { id } = req.params
@@ -83,7 +100,7 @@ router.post("/user/:id/searchemail", async (req, res, next) => {
   }
 })
 
-router.post("/user/:id/sendinvite", async (req, res, next) => {
+router.post("/invite/:id/send", async (req, res, next) => {
   try {
     const { id } = req.params
     console.log(req.body.contactId)
@@ -101,7 +118,7 @@ router.post("/user/:id/sendinvite", async (req, res, next) => {
   }
 })
 
-router.post("/user/:id/ignoreinvite", async (req, res, next) => {
+router.post("/invite/:id/reject", async (req, res, next) => {
   try {
     const { id } = req.params
     await Invite.updateOne({
@@ -114,7 +131,7 @@ router.post("/user/:id/ignoreinvite", async (req, res, next) => {
   }
 })
 
-router.post("/user/:id/acceptinvite", async (req, res, next) => {
+router.post("/invite/:id/approve", async (req, res, next) => {
   try {
     const { id } = req.params
     const invite = await Invite.find({
@@ -139,5 +156,77 @@ router.post("/user/:id/acceptinvite", async (req, res, next) => {
   }
 })
 
+router.post("/user/:id/updateprofile", async (req, res, next) => {
+  console.log(req.body)
+  try {
+    const { id } = req.params
+    if (req.body.password) {
+      await User.updateOne({
+        _id: id
+      }, { password: req.body.password})
+    }
+    if (req.body.language) {
+      await User.updateOne({
+        _id: id
+      }, { language: req.body.language})
+    }
+    const user = await User.find({_id: id})
+    res.json(user)
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
+router.post("/user/:id/updateprofileimg", upload.single("file"), async (req, res, next) => {
+    try {
+      const { id } = req.params
+      await User.updateOne({
+        _id: id
+      }, { image: req.file.path })
+      res.json(req.file)
+    } catch (err) {
+      console.error(err.message);
+      res.status(404).send('404 Not Found');
+    }
+})
+
+router.post("/invite/:id/email", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const user = await User.findOne({_id: id})
+    console.log(user.name)
+    const msg = {
+      to: req.body,
+      from: "wilsonfong82@gmail.com",
+      subject: `${user.name} invites you to join LangExchange!`,
+      text: `${user.name} has sent you an invite. Sign up now for LangExchange and start chatting with other people in other languages!`,
+      html: `<strong>
+              ${user.name} has sent you an invite.
+            </strong> 
+            <p>
+              Sign up now for LangExchange and start chatting with other people in other languages!
+            <p>
+            <a href="www.google.ca"> 
+                Sign up 
+            </a>
+            `
+    }
+
+    sgMail.send(msg)  
+    .then((response) => {
+      console.log(response[0].statusCode)
+      console.log(response[0].headers)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  } catch (err) {
+    console.error(err.message);
+    res.status(404).send('404 Not Found');
+  }
+})
+
 
 module.exports = router;
+
