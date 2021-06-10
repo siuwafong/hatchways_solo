@@ -17,8 +17,10 @@ import NewUserDialog from "../components/NewUserDialog"
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import axios from "axios"
+import  { Redirect } from 'react-router-dom'
 
-const Chat = ({...props}) => {
+
+const Chat = (props) => {
 
     const [currentUser, setCurrentUser] = useState("")
     const [friends, setFriends] = useState([])
@@ -31,45 +33,27 @@ const Chat = ({...props}) => {
     const [openDialog, setOpenDialog] = useState(null)
     const [showSteps, setShowSteps] = useState(false)
 
-    const newUserId = props.location.state._id
-    const referral = props.location.state.referral
-    const newUser = props.location.state.newUser
-    
-
-
-    // useEffect(() => {
-    //     fetch(`http://${url}/user/${newUserId}`, {
-    //       // credentials: "same-origin",
-    //       credentials: "include"
-    //     })
-    //         .then(res => res.json())
-    //         .then(data => setCurrentUser(data))
-    //         .then(() => {
-    //           referral !== undefined && setOpenDialog("NewUserDialog")
-    //         })
-    //         .catch(err => console.error(err))
-    // }, [])
-
+    const newUserId = props.location.state ? props.location.state._id  : ""
+    const referral = props.location.state ? props.location.state.referral : ""
+    const newUser = props.location.state ? props.location.state.newUser : ""
+  
     useEffect(() => {
-      axios.defaults.withCredentials = true
-      axios({
-        url:`http://${url}/user/${newUserId}`,
-        method: "get",
-        withCredentials: true,
-        headers: { crossDomain: true }
-      })
-      .then(res => setCurrentUser(res.data))
-      .then(() => {
-        referral !== undefined && setOpenDialog("NewUserDialog")
-      })
-      .catch(err => console.error(err))
+        fetch(`http://${url}/user/${newUserId}`, {
+          credentials: "include"
+        })
+            .then(res => res.json())
+            .then(data => setCurrentUser(data))
+            .then(() => {
+              referral !== undefined && setOpenDialog("NewUserDialog")
+            })
+            .catch(err => console.error(err))
     }, [])
 
     useEffect(() => {
         let friends = []
 
         fetch(`http://${url}/user/${newUserId}/contacts`, {
-          credentials: "same-origin",
+          credentials: "include"
         })
             .then(res => res.json())
             .then(data => data[0].friends.map(item => friends.push(item)))
@@ -82,13 +66,15 @@ const Chat = ({...props}) => {
         let allMessages = []        
 
         fetch(`http://${url}/user/${newUserId}/conversations`, {
-          credentials: "same-origin",
+          credentials: "include"
         })
             .then(res => res.json())
             .then(data => data.map(message => allMessages.push(message)))
             .then(() => setMessageList(allMessages))
             .catch((err) => console.error(err))
     }, [selectedChat])
+
+    if (!props.location.state) return <Redirect to="/login" />
 
     const handleClick = (e) => {
       anchorEl === null ? setAnchorEl(e.target) : setAnchorEl(null)
@@ -111,7 +97,7 @@ const Chat = ({...props}) => {
         selectedMessages.sort((a, b) => a.sendDate - b.sendDate)
         fetch(`http://${url}/user/${newUserId}/markread/${friendId}`, {
             method: "POST",
-            credentials: "same-origin",
+            credentials: "include",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -153,7 +139,7 @@ const Chat = ({...props}) => {
     const logout = () => {
       fetch(`http://${url}/logout`, {
         method: "POST",
-        credentials: "same-origin",
+        credentials: "include",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -190,6 +176,8 @@ const Chat = ({...props}) => {
         highlightClass: "myHighLightClass"
       }
     ]
+
+
 
     return (
         <Grid className="chatContainer">

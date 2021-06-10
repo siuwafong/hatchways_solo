@@ -25,11 +25,11 @@ const DropZone = ({ formState, formDispatch }) => {
     } else if (selectedFile !== "") {
       alert("You've already selected a file for upload")
     } else if (files.length === 1) {
-      validateFile(files[0])
+      validateAndDispatchFile(files[0])
     }
   }
 
-  const validateFile = file => {
+  const validateAndDispatchFile = file => {
     const validTypes = [
       "image/jpeg",
       "image/jpg",

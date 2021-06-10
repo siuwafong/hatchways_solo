@@ -9,7 +9,6 @@ const multer = require("multer")
 const { storage } = require("../cloudinary")
 const upload = multer({ storage })
 const { validateUser, validateMessage, validateInvite, testObject, requireLogin, auth, generateToken } = require("../middleware")
-require("dotenv").config()
 const sgMail = require("@sendgrid/mail")
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 const URL = "localhost:3000"
@@ -22,11 +21,14 @@ router.get("/welcome", function (req, res, next) {
 
 // get user based on id
 router.get("/user/:id", auth, async (req, res, next) => {
-  console.log(req.cookies.token)
   const { id } = req.params
   try {
+    if (req.userInfo.id === id) {
     const user = await User.findById(id)
     res.json(user)
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -36,12 +38,16 @@ router.get("/user/:id", auth, async (req, res, next) => {
 router.get("/user/:id/invitations", auth, async (req, res, next) => {
   const { id } = req.params
   try {
-    const receivedInvites = await Invite.find({ recipient: id }).populate(
-      "sender"
-    )
-    const sentInvites = await Invite.find({ sender: id }).populate("recipient")
-    const allInvites = receivedInvites.concat(sentInvites)
-    res.json(allInvites)
+    if (req.userInfo.id === id) {
+      const receivedInvites = await Invite.find({ recipient: id }).populate(
+        "sender"
+      )
+      const sentInvites = await Invite.find({ sender: id }).populate("recipient")
+      const allInvites = receivedInvites.concat(sentInvites)
+      res.json(allInvites)
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -51,8 +57,12 @@ router.get("/user/:id/invitations", auth, async (req, res, next) => {
 router.get("/user/:id/contacts", auth, async (req, res, next) => {
   const { id } = req.params
   try {
-    const contacts = await User.find({ _id: id }).populate("friends")
-    res.json(contacts)
+    if (req.userInfo.id === id) {
+      const contacts = await User.find({ _id: id }).populate("friends")
+      res.json(contacts)
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -62,12 +72,16 @@ router.get("/user/:id/contacts", auth, async (req, res, next) => {
 router.post("/user/:recipient/markread/:sender", auth, async (req, res, next) => {
   const { recipient, sender } = req.params
   try {
+    if (req.userInfo.id === recipient) {
     await Message.updateMany(
       {
         $and: [{ recipient: recipient }, { sender: sender }],
       },
       { read: true }
     )
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -77,12 +91,16 @@ router.post("/user/:recipient/markread/:sender", auth, async (req, res, next) =>
 router.get("/user/:id/conversations", auth, async (req, res, next) => {
   const { id } = req.params
   try {
-    const messages = await Message.find({
-      $or: [{ sender: id }, { recipient: id }],
-    })
-      .populate("sender")
-      .populate("recipient")
-    res.json(messages)
+    if (req.userInfo.id === id) {
+      const messages = await Message.find({
+        $or: [{ sender: id }, { recipient: id }],
+      })
+        .populate("sender")
+        .populate("recipient")
+      res.json(messages)
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -90,14 +108,18 @@ router.get("/user/:id/conversations", auth, async (req, res, next) => {
 })
 
 router.post("/user/:id/searchemail", auth, async (req, res, next) => {
+  const { id } = req.params
   try {
-    const { id } = req.params
-    const { email } = req.body
-    if (email) {
-      const matches = await User.find({
-        $and: [{ email: { $regex: email } }, { _id: { $ne: id } }],
-      })
-      res.json(matches)
+    if (req.userInfo.id === id) {
+      const { email } = req.body
+      if (email) {
+        const matches = await User.find({
+          $and: [{ email: { $regex: email } }, { _id: { $ne: id } }],
+        })
+        res.json(matches)
+      }
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
     }
   } catch (err) {
     console.error(err.message)
@@ -106,25 +128,29 @@ router.post("/user/:id/searchemail", auth, async (req, res, next) => {
 })
 
 router.post("/invite/:id/send", auth, async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const { contactId } = req.body
-    const existingInvite = await Invite.find({
-      $and: [
-        {sender: id},
-        {recipient: contactId}
-      ]
-    })
-    if (existingInvite.length === 0) {
-      const invite = new Invite({
-        sender: id,
-        recipient: contactId,
-        sendDate: dayjs(),
-        status: "pending",
+  const { id } = req.params
+    try {
+      if (req.userInfo.id === id) {
+      const { contactId } = req.body
+      const existingInvite = await Invite.find({
+        $and: [
+          {sender: id},
+          {recipient: contactId}
+        ]
       })
-      await invite.save()
-      res.json(invite)
-    }
+      if (existingInvite.length === 0) {
+        const invite = new Invite({
+          sender: id,
+          recipient: contactId,
+          sendDate: dayjs(),
+          status: "pending",
+        })
+        await invite.save()
+        res.json(invite)
+      }
+  } else {
+    res.status(401).json({ msg: "You are not authorized to access this user's data"})
+  }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -132,8 +158,9 @@ router.post("/invite/:id/send", auth, async (req, res, next) => {
 })
 
 router.post("/invite/:id/reject", auth, async (req, res, next) => {
+  const { id } = req.params
   try {
-    const { id } = req.params
+  if (req.userInfo.id === id) {
     const { contactId } = req.body
     await Invite.updateOne(
       {
@@ -142,6 +169,9 @@ router.post("/invite/:id/reject", auth, async (req, res, next) => {
       },
       { status: "declined" }
     )
+  } else {
+    res.status(401).json({ msg: "You are not authorized to access this user's data"})
+  }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -149,8 +179,9 @@ router.post("/invite/:id/reject", auth, async (req, res, next) => {
 })
 
 router.post("/invite/:id/approve", auth, async (req, res, next) => {
+  const { id } = req.params
   try {
-    const { id } = req.params
+  if (req.userInfo.id === id) {
     const { contactId } = req.body
     await Invite.updateOne(
       {
@@ -173,6 +204,9 @@ router.post("/invite/:id/approve", auth, async (req, res, next) => {
     )
     const newFriend = await User.find({ _id: contactId })
     res.json(newFriend)
+  } else {
+    res.status(401).json({ msg: "You are not authorized to access this user's data"})
+  }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -180,8 +214,9 @@ router.post("/invite/:id/approve", auth, async (req, res, next) => {
 })
 
 router.post("/user/:id/updateprofile", auth, async (req, res, next) => {
+  const { id } = req.params
   try {
-    const { id } = req.params
+    if (req.userInfo.id === id) {
     const { password, language } = req.body
     if (password !== "") {
       const hashedPassword = await bcrypt.hash(password, 12)
@@ -191,6 +226,9 @@ router.post("/user/:id/updateprofile", auth, async (req, res, next) => {
       const user = await User.findOneAndUpdate({ _id: id }, {language}, { new: true})
       res.json(user)
     }
+  } else {
+    res.status(401).json({ msg: "You are not authorized to access this user's data"})
+  }
   } catch (err) {
     console.error(err.message)
     res.status(404).send("404 Not Found")
@@ -202,15 +240,19 @@ router.post(
   upload.single("file"),
   auth, 
   async (req, res, next) => {
+    const { id } = req.params
     try {
-      const { id } = req.params
-      await User.updateOne(
-        {
-          _id: id,
-        },
-        { image: req.file.path }
-      )
-      res.json(req.file)
+      if (req.userInfo.id === id) {
+        await User.updateOne(
+          {
+            _id: id,
+          },
+          { image: req.file.path }
+        )
+        res.json(req.file)
+      } else {
+        res.status(401).json({ msg: "You are not authorized to access this user's data"})
+      }
     } catch (err) {
       console.error(err.message)
       res.status(404).send("404 Not Found")
@@ -219,8 +261,9 @@ router.post(
 )
 
 router.post("/invite/:id/email", auth, async (req, res, next) => {
+  const { id } = req.params
   try {
-    const { id } = req.params
+    if (req.userInfo.id === id) {
     const user = await User.findOne({_id: id})
     const msg = {
       to: req.body,
@@ -238,15 +281,13 @@ router.post("/invite/:id/email", auth, async (req, res, next) => {
             </a>
             `
     }
-
-    sgMail.send(msg)  
-    .then((response) => {
-      console.log(response[0].statusCode)
-      console.log(response[0].headers)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
+      sgMail.send(msg)
+      .catch((error) => {
+        console.error(error)
+      })
+    } else {
+      res.status(401).json({ msg: "You are not authorized to access this user's data"})
+    }  
   } catch (err) {
     console.error(err.message);
     res.status(404).send('404 Not Found');
@@ -326,6 +367,7 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/logout", async (req, res, next) => {
   try {
+    res.clearCookie("token", { path: "/"} )
     res.json({ logout: true })
   } catch (err) {
     console.error(err.message);

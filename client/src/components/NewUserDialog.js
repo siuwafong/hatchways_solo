@@ -35,7 +35,7 @@ const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen }) => {
         body: JSON.stringify({
           contactId: referralInvite[0]
         }),
-        credentials: "same-origin",
+        credentials: "include"
       }).catch(err => console.error(err))
     }
   }, [currentUser, referral])

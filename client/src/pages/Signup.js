@@ -85,7 +85,7 @@ const validateEmail = email => {
   return re.test(String(email).toLowerCase())
 }
 
-const Signup = ({...props}) => {
+const Signup = (props) => {
 
   const [formState, formDispatch] = useReducer(formReducer, initialFormState)
   const [errorMsgs, setErrorMsgs] = useState({
@@ -113,6 +113,7 @@ const Signup = ({...props}) => {
           headers: {
             "Content-Type": `application/json`,
           },
+          withCredentials: true
       })
       .then(res => res.data.errorMsg 
         ? 

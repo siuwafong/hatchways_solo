@@ -44,6 +44,7 @@ const InvitationDialog = ({
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data =>
@@ -86,7 +87,7 @@ const InvitationDialog = ({
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      credentials: "same-origin",
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => setFoundContacts(data))

@@ -45,7 +45,7 @@ const FoundContact = ({
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "same-origin",
+      credentials: "include"
     }).catch(err => console.error(err))
     setInvites({
       ...invites,
@@ -71,7 +71,7 @@ const FoundContact = ({
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "same-origin",
+      credentials: "include"
     }).catch(err => console.error(err))
 
     const updatedInvite = {
@@ -100,7 +100,7 @@ const FoundContact = ({
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "same-origin",
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => {

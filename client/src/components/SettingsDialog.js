@@ -182,6 +182,7 @@ const SettingsDialog = ({
             headers: {
               "Content-Type": `application/json`,
             },
+            withCredentials: true,
           })
           .then(res => {
             setCurrentUser(res.data)
@@ -199,6 +200,7 @@ const SettingsDialog = ({
           headers: {
             "Content-Type": `multipart/form-data`,
           },
+          credentials: "include",
         })
         .then(res => setCurrentUser({ ...currentUser, image: res.data.path }))
         .then(err => console.error(err))

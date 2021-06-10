@@ -67,7 +67,7 @@ const initialFormState = {
   },
 }
 
-const Login = ({...props}) => {
+const Login = (props) => {
   
   const [formState, formDispatch] = useReducer(formReducer, initialFormState)
   const [loginError, setLoginError] = useState("")
@@ -81,7 +81,8 @@ const Login = ({...props}) => {
     axios.post(`http://${url}/login`, body, {
       headers: {
         "Content-Type": `application/json`,
-      }
+      },
+      withCredentials: true
     })
     .then(res => res.data.errorMsg
       ?
