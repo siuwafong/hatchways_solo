@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react"
 import User from '../components/User'
-import { TextField, InputAdornment, Grid, Typography } from '@material-ui/core';
+import { TextField, InputAdornment, Grid, Typography, IconButton, Button, Menu, MenuItem } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { url, userId } from '../utils/MockData'
-import { AdvancedImage } from '@cloudinary/react';
-import { Cloudinary } from "@cloudinary/base";
 import ChatMsg from '../components/ChatMsg'
 import dayjs from 'dayjs'
 import { v4 as uuidv4 } from 'uuid';
@@ -15,8 +13,15 @@ import './Chat.css'
 import InvitationDialog from "../components/InvitationDialog";
 import SetttingsDialog from "../components/SettingsDialog"
 import EmailDialog from "../components/EmailDialog"
+import NewUserDialog from "../components/NewUserDialog"
+import { Steps, Hints } from 'intro.js-react';
+import 'intro.js/introjs.css';
+import axios from "axios"
+import  { Redirect } from 'react-router-dom'
 
-const Chat = () => {
+
+
+const Chat = (props) => {
 
     const [currentUser, setCurrentUser] = useState("")
     const [friends, setFriends] = useState([])
@@ -25,56 +30,78 @@ const Chat = () => {
     const [messages, setMessages] = useState(null)
     const [messageList, setMessageList] = useState([])
     const [newMsg, setNewMsg] = useState("")
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [openDialog, setOpenDialog] = useState(null)
+    const [showSteps, setShowSteps] = useState(false)
 
-    const cld = new Cloudinary({
-        cloud: {
-            cloudName: 'dmf6tpe7e'
-        }
-    })
-
+    const newUserId = props.location.state ? props.location.state._id  : ""
+    const referral = props.location.state ? props.location.state.referral : ""
+    const newUser = props.location.state ? props.location.state.newUser : ""
+  
     useEffect(() => {
-        fetch(`http://${url}/user/${userId}`)
+        fetch(`http://${url}/user/${newUserId}`, {
+          credentials: "include"
+        })
             .then(res => res.json())
             .then(data => setCurrentUser(data))
-            .catch(err => console.log(err))
+            .then(() => {
+              referral !== undefined && setOpenDialog("NewUserDialog")
+            })
+            .catch(err => console.error(err))
     }, [])
 
     useEffect(() => {
         let friends = []
 
-        fetch(`http://${url}/user/${userId}/contacts`)
+        fetch(`http://${url}/user/${newUserId}/contacts`, {
+          credentials: "include"
+        })
             .then(res => res.json())
             .then(data => data[0].friends.map(item => friends.push(item)))
             .then(() => setFriends(friends))
             .then(() => setFilteredFriends(friends))
-            .catch((err) => console.log(err))
+            .catch((err) => console.error(err))
     }, []) 
 
     useEffect(() => {
         let allMessages = []        
 
-        fetch(`http://${url}/user/${userId}/conversations`)
+        fetch(`http://${url}/user/${newUserId}/conversations`, {
+          credentials: "include"
+        })
             .then(res => res.json())
             .then(data => data.map(message => allMessages.push(message)))
             .then(() => setMessageList(allMessages))
-            .catch((err) => console.log(err))
+            .catch((err) => console.error(err))
     }, [selectedChat])
+
+    if (!props.location.state) return <Redirect to="/login" />
+
+    const handleClick = (e) => {
+      anchorEl === null ? setAnchorEl(e.target) : setAnchorEl(null)
+    };
 
     const selectChat = (friendId) => {
         const selectedFriend = friends.find(friend => friend._id === friendId)
         setSelectedChat(selectedFriend)
-        let selectedMessages = messageList.filter(message => 
-            (message.recipient.name === selectedFriend.name && message.sender.name === currentUser.name) 
-            || 
-            (message.recipient.name === currentUser.name && message.sender.name === selectedFriend.name )
-            )
+
+        let selectedMessages = messageList.filter(message => {
+          const isRecipientSelectedFriend = message.recipient.name === selectedFriend.name;
+          const isSenderCurrentUser = message.sender.name === currentUser.name;
+          const isRecipientCurrentUser = message.recipient.name === currentUser.name;
+          const isSenderSelectedFriend = message.sender.name === selectedFriend.name;
+          const isRecipientFriendAndSenderUser = isRecipientSelectedFriend && isSenderCurrentUser;
+          const isRecipientUserAndSenderFriend = isRecipientCurrentUser && isSenderSelectedFriend;
+
+          return (isRecipientFriendAndSenderUser || isRecipientUserAndSenderFriend)
+        })
         selectedMessages.sort((a, b) => a.sendDate - b.sendDate)
-        fetch(`http://${url}/user/${userId}/markread/${friendId}`, {
+        fetch(`http://${url}/user/${newUserId}/markread/${friendId}`, {
             method: "POST",
-            credentials: "same-origin",
+            credentials: "include",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
         })
             
@@ -106,28 +133,116 @@ const Chat = () => {
         setNewMsg("")
     }
 
+    const handleClose = () => {
+      setAnchorEl(null)
+    }
+
+    const logout = () => {
+      fetch(`http://${url}/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.logout === true) {
+          props.history.push("/login") 
+        }
+    })
+    }
+
+    const steps = [
+      {
+        element: ".settingsIcon1",
+        intro: "Click here to edit your profile. You can change your password, add a photo, and also set your language. Your current language is set to English. You can also add friends and invite people to join this app.",
+        position: "right",
+        tooltipClass: "myTooltipClass",
+        highlightClass: "myHighLightClass"
+      },
+      {
+        element: ".settingsIcon2",
+        intro: "You'll see a list of friends here. You can search from your existing friends in the search bar above.",
+        position: "right",
+        tooltipClass: "myTooltipClass",
+        highlightClass: "myHighLightClass"
+      },
+      {
+        element: ".settingsIcon3",
+        intro: "You can type your messages here. The app will automatically translate your messages to your friend's language, and your friend's messages to you will be translated to your language, so you can all understand each other just fine :)",
+        position: "right",
+        tooltipClass: "myTooltipClass",
+        highlightClass: "myHighLightClass"
+      }
+    ]
+
+
+
     return (
         <Grid className="chatContainer">
-            <SetttingsDialog 
-                letOpen={false}
-                name={currentUser.name}
-                password={currentUser.password}
-                image={currentUser.image}
-                language={currentUser.language}
-                setCurrentUser={setCurrentUser}
+            {openDialog === "invite" &&
+              <EmailDialog
+                letOpen={true}
                 currentUser={currentUser}
-            />
-            <InvitationDialog
+                setOpenDialog={setOpenDialog}
+              />
+            }
+            {openDialog === "settings" &&
+              <SetttingsDialog 
+                  letOpen={false}
+                  name={currentUser.name}
+                  password={currentUser.password}
+                  image={currentUser.image}
+                  language={currentUser.language}
+                  setCurrentUser={setCurrentUser}
+                  currentUser={currentUser}
+                  setOpenDialog={setOpenDialog}
+                />
+            }
+            {openDialog === "settings" &&
+              <SetttingsDialog 
+                  letOpen={true}
+                  name={currentUser.name}
+                  password={currentUser.password}
+                  image={currentUser.image}
+                  language={currentUser.language}
+                  setCurrentUser={setCurrentUser}
+                  currentUser={currentUser}
+                  setOpenDialog={setOpenDialog}
+              />
+            }
+            {openDialog === "addFriends" &&
+              <InvitationDialog
+                  currentUser={currentUser}
+                  friends={friends}
+                  setFriends={setFriends}
+                  setFilteredFriends={setFilteredFriends}
+                  letOpen={true}
+                  setOpenDialog={setOpenDialog}
+              />
+            }
+            {newUser === true && 
+              <NewUserDialog
                 currentUser={currentUser}
+                setShowSteps={setShowSteps}
+                letOpen={newUser === true}
                 friends={friends}
                 setFriends={setFriends}
                 setFilteredFriends={setFilteredFriends}
-                letOpen={false}
-            />
-            <EmailDialog 
-                currentUser={currentUser}
-                letOpen={true}
-            />
+                referral={referral}
+              />
+            }
+            {showSteps === true &&
+              <Steps
+                enabled={true}
+                steps={steps}
+                initialStep={0}
+                onExit={() => setShowSteps(false)}
+              />
+            }
+
             <Grid className="chatListContainer">
                 <Grid className="currentUserContainer">
                     <Grid className="currentUserPicStatus">
@@ -137,7 +252,24 @@ const Chat = () => {
                     <Grid className="userNameMsg">
                         <p className="username"> {currentUser.name} </p> 
                     </Grid>
-                    <MoreHorizIcon />
+                    <IconButton
+                      onClick={(e) => handleClick(e)}
+                      className="settingsIcon1"
+                    >
+                      <MoreHorizIcon />
+                      <Menu
+                        id="simple-menu"
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        anchorEl={anchorEl}
+                        keepMounted
+                      >
+                        <MenuItem onClick={() => setOpenDialog("settings")}>Profile</MenuItem>
+                        <MenuItem onClick={() => setOpenDialog("addFriends")}>Add friends</MenuItem>
+                        <MenuItem onClick={() => setOpenDialog("invite")}>Invite someone</MenuItem>
+                        <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                      </Menu>
+                    </IconButton>
                 </Grid>
                 <Typography variant="h3">Chats</Typography>
                 <TextField
@@ -153,8 +285,10 @@ const Chat = () => {
                         ),
                     }}
                 />
-                <Grid className="usersContainer">
-                {filteredFriends.map(user => (
+                <Grid className="usersContainer settingsIcon2">
+                {filteredFriends.length !== 0 
+                  ? 
+                  filteredFriends.map(user => (
                     <Grid 
                         onClick={() => selectChat(user._id)}
                         className={selectedChat !== null ? selectedChat._id === user._id ? `selectedChat` : "" : ""}
@@ -169,10 +303,15 @@ const Chat = () => {
                             id={user._id}
                         />
                     </Grid>
-                ))}
+                ))
+                  :
+                  <Grid> 
+                    You have no friends yet.
+                  </Grid>
+                }
                 </Grid>
             </Grid>
-            <Grid className="currentChatContainer">
+            <Grid className="currentChatContainer settingsIcon3">
                 <Grid className="currentChatTitle">
                     <span className="currentChatName">{selectedChat !== null && selectedChat.name}</span>
                     <Grid className={`statusDotCurrent ${selectedChat !== null ? selectedChat.status === "Online" ? "statusAvailableCurrent" : "statusAwayCurrent" : "hideCurrent"}`}></Grid> 

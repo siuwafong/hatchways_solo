@@ -108,3 +108,13 @@
     overflow-y: scroll;
     max-height: 75%
 }
+
+.settingsIcon {
+  position: relative
+}
+
+.settingsMenu {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}

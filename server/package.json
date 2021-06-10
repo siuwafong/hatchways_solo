@@ -9,18 +9,22 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^7.4.4",
+    "bcrypt": "^5.0.1",
     "cloudinary": "^1.25.1",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "http-errors": "~1.8.0",
     "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.6",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^2.0.6",
+    "passport": "^0.4.1",
     "react-debounce-input": "^3.2.3"
   },
   "devDependencies": {

@@ -44,6 +44,7 @@
     margin: 0 10px;
     margin-right: 40px;
     width: 200px;
+    cursor: default
 }
 
 
@@ -54,7 +55,7 @@
 
 .userMsg {
     margin: 0 0;
-    /* font-size: 0.8rem; */
+    font-size: 0.8rem;
 }
 
 .unreadContainer {

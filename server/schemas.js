@@ -1,14 +1,14 @@
 const Joi = require('joi')
 
 module.exports.userSchema = Joi.object({
-    user: Joi.object({
         name: Joi.string().required(),
-        email: Joi.string().required(),
+        email: Joi.string(),
         joinDate: Joi.date().less('now'),
         friends: Joi.array().items(Joi.string()),
         image: Joi.string(),
-        status: Joi.string()
-    }).required()
+        status: Joi.string(),
+        password: Joi.string().required(),
+        referral: Joi.string()
 })
 
 module.exports.messageSchema = Joi.object({

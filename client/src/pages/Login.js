@@ -1,91 +1,101 @@
-import React, { useReducer} from "react"
-import './Login.css'
-import { withStyles } from '@material-ui/core/styles'
-import { TextField, Grid, Button } from '@material-ui/core'
-import Background from '../components/Background'
-import { Link } from 'react-router-dom'
+import React, { useState, useReducer } from "react"
+import "./Login.css"
+import { withStyles } from "@material-ui/core/styles"
+import { TextField, Grid, Button, FormHelperText } from "@material-ui/core"
+import Background from "../components/Background"
+import { Link } from "react-router-dom"
+import axios from "axios"
+import styled from "styled-components"
+import { url } from '../utils/MockData'
+
 
 const SwitchButton = withStyles({
-    root: {
-        border: 0,
-        borderRadius: 3,
-        boxShadow: '0 3px 2px 3px #D8D8D8',
-        color: "#3A8DFF",
-        textTransform: "capitalize",
-        fontSize: "1rem"
-    }
-})(Button);
+  root: {
+    border: 0,
+    borderRadius: 3,
+    boxShadow: "0 3px 2px 3px #D8D8D8",
+    color: "#3A8DFF",
+    textTransform: "capitalize",
+    fontSize: "1rem",
+  },
+})(Button)
 
 const LoginButton = withStyles({
-    root: {
-        border: 0,
-        borderRadius: 3,
-        backgroundColor: "#3A8DFF",
-        textTransform: 'capitalize',
-        color: "#FFFFFF", 
-    }
-})(Button);
+  root: {
+    border: 0,
+    borderRadius: 3,
+    backgroundColor: "#3A8DFF",
+    textTransform: "capitalize",
+    color: "#FFFFFF",
+  },
+})(Button)
 
+const StyledFormHelperText = styled(FormHelperText)`
+  margin-top: 10px;
+  color: #cc0000;
+`
 
 const formReducer = (state, action) => {
-    switch(action.type) {
-        case 'email':
-            return {
-                ...state,
-                email: {
-                    value: action.payload, 
-                }
-
-            }
-        case 'password':
-            return {
-                ...state,
-                password: {
-                    value: action.payload,
-                }
-            }
-        case 'login':
-            return 
-        default:
-            return state
-    }
+  switch (action.type) {
+    case "email":
+      return {
+        ...state,
+        email: {
+          value: action.payload,
+        },
+      }
+    case "password":
+      return {
+        ...state,
+        password: {
+          value: action.payload,
+        },
+      }
+    case "login":
+      return
+    default:
+      return state
+  }
 }
 
 const initialFormState = {
-        email: {
-            value: "",
-        },
-        password: {
-            value: "",
-        }
+  email: {
+    value: "",
+  },
+  password: {
+    value: "",
+  },
 }
 
-const validateEmail = (email) => {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
+const Login = (props) => {
+  
+  const [formState, formDispatch] = useReducer(formReducer, initialFormState)
+  const [loginError, setLoginError] = useState("")
 
-const Login = () => {
 
-    const [formState, formDispatch] = useReducer(formReducer, initialFormState)
-
-    const submitHandler = (e) => {
-        e.preventDefault()
-        formDispatch({
-            type: 'login',
-            payload: {
-                email: formState.email,
-                password: formState.password
-            }
-        })
+  const handleSubmit = (e) => {
+    const body = {
+      email: formState.email.value,
+      password: formState.password.value
     }
-
+    axios.post(`http://${url}/login`, body, {
+      headers: {
+        "Content-Type": `application/json`,
+      },
+      withCredentials: true
+    })
+    .then(res => res.data.errorMsg
+      ?
+    setLoginError(res.data.errorMsg)
+      :
+    props.history.push("/chat", res.data )
+    )
+  }
+  
     return (
         <Grid className="loginContainer">
-
             <Grid className="switchSection">
                 <p className="switchMsg">
-
                     Don't have an account?
                 </p>
                 <SwitchButton
@@ -148,6 +158,6 @@ const Login = () => {
 
         </Grid>
     )
-}
+  }
 
 export default Login

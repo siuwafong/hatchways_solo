@@ -22,7 +22,8 @@ const EmailDialog = ({ currentUser, letOpen }) => {
             axios.post(`http://${url}/invite/${userId}/email`, {email: friendEmail}, {
                 headers: {
                     'Content-Type': `application/json`,
-                }
+                },
+                withCredentials: true
             })
         } else {
             setErrorMsg(true)
