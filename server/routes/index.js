@@ -15,6 +15,7 @@ const URL = "localhost:3000"
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
+
 router.get("/welcome", function (req, res, next) {
   res.status(200).send({ welcomeMessage: "Step 1 (completed)" })
 })
@@ -369,6 +370,36 @@ router.post("/logout", async (req, res, next) => {
   try {
     res.clearCookie("token", { path: "/"} )
     res.json({ logout: true })
+router.post("/invite/:id/email", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const user = await User.findOne({_id: id})
+    console.log(user.name)
+    const msg = {
+      to: req.body,
+      from: "wilsonfong82@gmail.com",
+      subject: `${user.name} invites you to join LangExchange!`,
+      text: `${user.name} has sent you an invite. Sign up now for LangExchange and start chatting with other people in other languages!`,
+      html: `<strong>
+              ${user.name} has sent you an invite.
+            </strong> 
+            <p>
+              Sign up now for LangExchange and start chatting with other people in other languages!
+            <p>
+            <a href="www.google.ca"> 
+                Sign up 
+            </a>
+            `
+    }
+
+    sgMail.send(msg)  
+    .then((response) => {
+      console.log(response[0].statusCode)
+      console.log(response[0].headers)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
   } catch (err) {
     console.error(err.message);
     res.status(404).send('404 Not Found');

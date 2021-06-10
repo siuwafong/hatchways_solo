@@ -91,64 +91,73 @@ const Login = (props) => {
     props.history.push("/chat", res.data )
     )
   }
+  
+    return (
+        <Grid className="loginContainer">
+            <Grid className="switchSection">
+                <p className="switchMsg">
+                    Don't have an account?
+                </p>
+                <SwitchButton
+                    className="switchBtn"
+                    component={Link}
+                    to="/signup"
+                >   
+                    Signup
+                </SwitchButton>
+            </Grid>
 
-  return (
-    <Grid className="loginContainer">
-      <Grid className="switchSection">
-        <p className="switchMsg">Don't have an account?</p>
-        <SwitchButton className="switchBtn" component={Link} to="/signup">
-          Signup
-        </SwitchButton>
-      </Grid>
+            <form 
+                className="loginForm"
+                onSubmit={submitHandler}
+            >
+                <h1>
+                    Welcome back!
+                </h1>
+                <Grid className="loginInput">
+                    <TextField 
+                        label="E-mail address" 
+                        placeholder="Input your email address registered with us here" 
+                        fullWidth
+                        type="email"
+                        onChange={e => formDispatch({
+                            type: "email",
+                            payload: e.target.value
+                        })}
+                        value={formState.email.value}
+                        required
+                    />
+                </Grid>
+                <Grid className="loginInput">
+                    <TextField 
+                        label="Password" 
+                        fullWidth
+                        type="password"
+                        onChange={e => formDispatch({
+                            type: "password",
+                            payload: e.target.value
+                        })}
+                        placeholder="Input your password here"
+                        value={formState.password.value}
+                        required
+                    />
+                </Grid>
+                <p className="loginForgotMsg">
+                    Forgot?
+                </p>
+                <LoginButton 
+                    type="submit" 
+                    className="loginBtn"
+                    style={{fontSize: "1.1rem"}}
+                >
+                    Login
+                </LoginButton>
+            </form>
 
-      <form className="loginForm">
-        <h1>Welcome back!</h1>
-        <Grid className="loginInput">
-          <TextField
-            label="E-mail address"
-            placeholder="Input your email address registered with us here"
-            fullWidth
-            type="email"
-            onChange={e =>
-              formDispatch({
-                type: "email",
-                payload: e.target.value,
-              })
-            }
-            required
-          />
+            <Background />
+
         </Grid>
-        <Grid className="loginInput">
-          <TextField
-            label="Password"
-            fullWidth
-            type="password"
-            onChange={e =>
-              formDispatch({
-                type: "password",
-                payload: e.target.value,
-              })
-            }
-            placeholder="Input your password here"
-            required
-          />
-        </Grid>
-        <p className="loginForgotMsg">Forgot?</p>
-        <StyledFormHelperText>
-          {loginError}
-        </StyledFormHelperText>
-        <LoginButton
-          onClick={(e) => handleSubmit(e)}
-          className="loginBtn"
-          style={{ fontSize: "1.1rem" }}
-        >
-          Login
-        </LoginButton>
-      </form>
-
-      <Background />
-    </Grid>
-  )
-}
+    )
+  }
 
 export default Login

@@ -20,6 +20,7 @@ import axios from "axios"
 import  { Redirect } from 'react-router-dom'
 
 
+
 const Chat = (props) => {
 
     const [currentUser, setCurrentUser] = useState("")
@@ -190,6 +191,18 @@ const Chat = (props) => {
             }
             {openDialog === "settings" &&
               <SetttingsDialog 
+                  letOpen={false}
+                  name={currentUser.name}
+                  password={currentUser.password}
+                  image={currentUser.image}
+                  language={currentUser.language}
+                  setCurrentUser={setCurrentUser}
+                  currentUser={currentUser}
+                  setOpenDialog={setOpenDialog}
+                />
+            }
+            {openDialog === "settings" &&
+              <SetttingsDialog 
                   letOpen={true}
                   name={currentUser.name}
                   password={currentUser.password}
@@ -229,6 +242,7 @@ const Chat = (props) => {
                 onExit={() => setShowSteps(false)}
               />
             }
+
             <Grid className="chatListContainer">
                 <Grid className="currentUserContainer">
                     <Grid className="currentUserPicStatus">
