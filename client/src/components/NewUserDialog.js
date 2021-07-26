@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import "./NewUserDialog.css"
+import React, { useEffect, useState } from 'react';
+import './NewUserDialog.css';
 import {
   Dialog,
   DialogTitle,
@@ -9,46 +9,43 @@ import {
   Button,
   IconButton,
   Grid,
-} from "@material-ui/core"
-import CloseIcon from "@material-ui/icons/Close"
-import { url } from '../utils/MockData'
-
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { url } from '../utils/MockData';
 
 const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen }) => {
-  
-  const [open, setOpen] = useState(letOpen)
-  const [referralInvite, setRefferalInvite] = useState("")
+  const [open, setOpen] = useState(letOpen);
+  const [referralInvite, setRefferalInvite] = useState('');
 
   useEffect(() => {
     if (referral) {
       fetch(`http://${url}/user/${referral}`)
-      .then(res => res.json())
-      .then(data => setRefferalInvite([data]))
-      .catch(err => console.log(err))
+        .then((res) => res.json())
+        .then((data) => setRefferalInvite([data]))
+        .catch((err) => console.error(err));
 
       fetch(`http://${url}/invite/${currentUser._id}/send`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contactId: referralInvite[0]
+          contactId: referralInvite[0],
         }),
-        credentials: "include"
-      }).catch(err => console.error(err))
+        credentials: 'include',
+      }).catch((err) => console.error(err));
     }
-  }, [currentUser, referral])
-
+  }, [currentUser, referral, referralInvite]);
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const handleNext = () => {
-    setShowSteps(true)
-    setOpen(false)
-  }
+    setShowSteps(true);
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth={true}>
@@ -65,25 +62,33 @@ const NewUserDialog = ({ referral, currentUser, setShowSteps, letOpen }) => {
       </Grid>
       <DialogContent>
         <DialogContentText>
-          Welcome to the language exchange app. Here you will be able to make friends from around the world and communicate with them in any language.
+          Welcome to the language exchange app. Here you will be able to make
+          friends from around the world and communicate with them in any
+          language.
         </DialogContentText>
-        {referralInvite !== "" &&
+        {referralInvite !== '' && (
           <>
-          <DialogContentText>
-            We've sent an invite to {referralInvite[0].name}, who invited you. Once they've accepted your invite then you can start your chat with them!
-          </DialogContentText>
-          <Grid className="referralImgContainer">
-            <img src={referralInvite[0].image} className="refferalImg" alt="referralImg"/>
-          </Grid>
+            <DialogContentText>
+              We've sent an invite to {referralInvite[0].name}, who invited you.
+              Once they've accepted your invite then you can start your chat
+              with them!
+            </DialogContentText>
+            <Grid className="referralImgContainer">
+              <img
+                src={referralInvite[0].image}
+                className="refferalImg"
+                alt="referralImg"
+              />
+            </Grid>
           </>
-        }
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleNext}>Next</Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default NewUserDialog
+export default NewUserDialog;

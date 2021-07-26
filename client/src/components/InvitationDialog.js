@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import "./InvitationDialog.css"
+import React, { useState, useEffect } from 'react';
+import './InvitationDialog.css';
 import {
   Dialog,
   DialogTitle,
@@ -13,12 +13,12 @@ import {
   List,
   Tabs,
   Tab,
-} from "@material-ui/core"
-import CloseIcon from "@material-ui/icons/Close"
-import validateEmail from "../utils/HelperFunctions"
-import { DebounceInput } from "react-debounce-input"
-import FoundContact from "../components/FoundContact"
-import { url } from "../utils/MockData"
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import validateEmail from '../utils/HelperFunctions';
+import { DebounceInput } from 'react-debounce-input';
+import FoundContact from '../components/FoundContact';
+import { url } from '../utils/MockData';
 
 const InvitationDialog = ({
   setFilteredFriends,
@@ -27,28 +27,28 @@ const InvitationDialog = ({
   letOpen,
   currentUser,
 }) => {
-  const [open, setOpen] = useState(letOpen)
-  const [friendEmail, setFriendEmail] = useState("")
-  const [validEmail, setValidEmail] = useState(true)
-  const [foundContacts, setFoundContacts] = useState([])
-  const [invites, setInvites] = useState({})
-  const [tabValue, setTabValue] = useState(0)
+  const [open, setOpen] = useState(letOpen);
+  const [friendEmail, setFriendEmail] = useState('');
+  const [validEmail, setValidEmail] = useState(true);
+  const [foundContacts, setFoundContacts] = useState([]);
+  const [invites, setInvites] = useState({});
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     let allInvites = {
       sent: [],
       received: [],
-    }
+    };
     // TODO - replace user id
-    fetch(`http://${url}/user/${currentUser._id}/invitations`, {
+    fetch(`http://${url}/invite/${currentUser._id}/invitations`, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      credentials: "include"
+      credentials: 'include',
     })
-      .then(res => res.json())
-      .then(data =>
-        data.map(invite =>
+      .then((res) => res.json())
+      .then((data) =>
+        data.map((invite) =>
           invite.recipient === currentUser._id
             ? allInvites.received.push({
                 name: invite.sender.name,
@@ -66,42 +66,42 @@ const InvitationDialog = ({
         )
       )
       .then(() => setInvites(allInvites))
-      .catch(err => console.error(err))
-  }, [])
+      .catch((err) => console.error(err));
+  }, []);
 
-  const handleChange = e => {
-    const formInput = e.target.value
-    setFriendEmail(formInput)
-    if (formInput === "") {
-      setValidEmail(true)
+  const handleChange = (e) => {
+    const formInput = e.target.value;
+    setFriendEmail(formInput);
+    if (formInput === '') {
+      setValidEmail(true);
     } else {
-      setValidEmail(validateEmail(formInput))
+      setValidEmail(validateEmail(formInput));
     }
 
     fetch(`http://${url}/user/${currentUser._id}/searchemail`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
         email: formInput,
       }),
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      credentials: "include"
+      credentials: 'include',
     })
-      .then(res => res.json())
-      .then(data => setFoundContacts(data))
+      .then((res) => res.json())
+      .then((data) => setFoundContacts(data));
 
-    if (formInput === "" || formInput === ".") setFoundContacts([])
-  }
+    if (formInput === '' || formInput === '.') setFoundContacts([]);
+  };
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const handleTabChange = (event, newTabValue) => {
-    setTabValue(newTabValue)
-  }
+    setTabValue(newTabValue);
+  };
 
   return (
     <Dialog
@@ -137,7 +137,7 @@ const InvitationDialog = ({
               Find a friend by entering their email.
             </DialogContentText>
             <DebounceInput
-              onChange={e => handleChange(e)}
+              onChange={(e) => handleChange(e)}
               debounceTimeout={800}
               element={TextField}
               label="Email Address"
@@ -146,7 +146,7 @@ const InvitationDialog = ({
               margin="dense"
               value={friendEmail}
               helperText={
-                validEmail === false ? "Please enter a valid email address" : ""
+                validEmail === false ? 'Please enter a valid email address' : ''
               }
               error={validEmail === false}
             />
@@ -156,7 +156,7 @@ const InvitationDialog = ({
           </DialogActions>
           <DialogContent>
             <List>
-              {foundContacts.map(contact => (
+              {foundContacts.map((contact) => (
                 <FoundContact
                   name={contact.name}
                   image={contact.image}
@@ -184,12 +184,12 @@ const InvitationDialog = ({
               <CloseIcon />
             </IconButton>
           </Grid>
-          {invites.received.filter(contact => contact.status !== "declined")
+          {invites.received.filter((contact) => contact.status !== 'declined')
             .length !== 0 ? (
             <DialogContent>
               {invites.received
-                .filter(contact => contact.status === "pending")
-                .map(contact => (
+                .filter((contact) => contact.status === 'pending')
+                .map((contact) => (
                   <FoundContact
                     name={contact.name}
                     image={contact.image}
@@ -216,7 +216,7 @@ const InvitationDialog = ({
         </>
       )}
     </Dialog>
-  )
-}
+  );
+};
 
-export default InvitationDialog
+export default InvitationDialog;
