@@ -1,40 +1,39 @@
-import React, { Component } from "react";
-import { Typography } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { Route, Link } from "react-router-dom";
+import React, { Component } from 'react';
+import { Typography } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { Route, Link } from 'react-router-dom';
 
-import Ping from "./Ping";
+import Ping from './Ping';
 
-const landinPageStyle = theme => ({
+const landinPageStyle = (theme) => ({
   landingContainer: {
-    margin: theme.spacing.unit * 2
-  }
+    margin: theme.spacing.unit * 2,
+  },
 });
 
 class LandingPage extends Component {
   state = {
-    welcomeMessage: "Step 1: Run the server and refresh (not running)",
-    step: 0
+    welcomeMessage: 'Step 1: Run the server and refresh (not running)',
+    step: 0,
   };
 
   componentDidMount() {
-    fetch("/welcome")
-      .then(res => {
-        console.log(res);
+    fetch('/welcome')
+      .then((res) => {
         if (res.status === 200) return res.json();
         else throw Error("Couldn't connect to the server");
       })
-      .then(res => {
+      .then((res) => {
         this.setState({ welcomeMessage: res.welcomeMessage });
         this.incrementStep();
       })
-      .catch(err => {
-        console.log(err.message);
+      .catch((err) => {
+        console.error(err.message);
       });
   }
 
   incrementStep = () => {
-    this.setState(prevState => ({ step: (prevState.step += 1) }));
+    this.setState((prevState) => ({ step: (prevState.step += 1) }));
   };
 
   render() {
@@ -47,7 +46,7 @@ class LandingPage extends Component {
             <Link to="/ping">Step 2: Click here </Link>
             <Route
               path="/ping"
-              render={props => {
+              render={(props) => {
                 return (
                   <Ping
                     {...props}

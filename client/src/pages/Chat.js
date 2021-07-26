@@ -72,7 +72,7 @@ const Chat = (props) => {
   useEffect(() => {
     let allMessages = [];
 
-    fetch(`http://${url}/user/${newUserId}/conversations`, {
+    fetch(`http://${url}/message/${newUserId}/conversations`, {
       credentials: 'include',
     })
       .then((res) => res.json())
@@ -106,8 +106,8 @@ const Chat = (props) => {
 
       return isRecipientFriendAndSenderUser || isRecipientUserAndSenderFriend;
     });
-    selectedMessages.sort((a, b) => a.sendDate - b.sendDate);
-    fetch(`http://${url}/user/${newUserId}/markread/${friendId}`, {
+    selectedMessages.sort((a, b) => a.createdAt - b.createdAt);
+    fetch(`http://${url}/message/${newUserId}/markread/${friendId}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -137,7 +137,6 @@ const Chat = (props) => {
     setMessages([
       ...messages,
       {
-        sendDate: dayjs(),
         type: 'msg',
         content: newMsg,
         sender: currentUser.name,
@@ -154,7 +153,7 @@ const Chat = (props) => {
   };
 
   const logout = () => {
-    fetch(`http://${url}/logout`, {
+    fetch(`http://${url}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -380,7 +379,7 @@ const Chat = (props) => {
                   message.sender.name === currentUser.name ? 'sent' : 'received'
                 }
                 content={message.content}
-                sendDate={dayjs(message.sendDate).format('hh:mma')}
+                sendDate={dayjs(message.createdAt).format('hh:mma')}
                 userImg={
                   message.recipient.name === currentUser.name
                     ? friends.filter(

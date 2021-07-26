@@ -1,8 +1,7 @@
 ## Refactoring
 
-- sort routes
-- move API calls to a separate folder
 - separate message schema to conversation and message schema
+- add loading animations
 
 ## New Features
 

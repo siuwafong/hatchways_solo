@@ -77,7 +77,7 @@ const Login = (props) => {
       password: formState.password.value,
     };
     axios
-      .post(`http://${url}/login`, body, {
+      .post(`http://${url}/auth/login`, body, {
         headers: {
           'Content-Type': `application/json`,
         },
