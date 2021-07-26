@@ -39,6 +39,10 @@ connectDB();
 
 // Set up router
 const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
+const inviteRouter = require('./routes/invite');
+const messageRouter = require('./routes/message');
 const pingRouter = require('./routes/ping');
 
 const { json, urlencoded } = express;
@@ -72,6 +76,10 @@ app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
+app.use('/message', messageRouter);
+app.use('/invite', inviteRouter);
+app.use('/user', userRouter);
 app.use('/ping', pingRouter);
 
 // catch 404 and forward to error handler

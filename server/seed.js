@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const User = require('./models/users');
 const Invite = require('./models/invites');
 const Message = require('./models/messages');
+const Conversation = require('./models/conversation');
 const multer = require('multer');
 const { storage } = require('./cloudinary');
 const upload = multer({ storage });
 const bcrypt = require('bcrypt');
+const { ConnectionStates } = require('mongoose');
 
 require('dotenv').config();
 
@@ -220,6 +222,27 @@ const messageData = [
   },
 ];
 
+const conversationData = [
+  {
+    participants: ['santiago', 'thomas'],
+  },
+  {
+    participants: ['chiumbo', 'thomas'],
+  },
+  {
+    participants: ['hualing', 'thomas'],
+  },
+  {
+    participants: ['ashanti', 'thomas'],
+  },
+  {
+    participants: ['julia', 'thomas'],
+  },
+  {
+    participants: ['thomas', 'cheng'],
+  },
+];
+
 const inviteData = [
   {
     sender: 'joel',
@@ -240,6 +263,7 @@ const seedDB = async () => {
   await User.deleteMany({});
   await Message.deleteMany({});
   await Invite.deleteMany({});
+  await Conversation.deleteMany({});
 
   // add User data (without friends)
   for (let i = 0; i < userData.length; i++) {
@@ -279,6 +303,56 @@ const seedDB = async () => {
       sendDate: messageData[i].sendDate,
     });
     await message.save();
+  }
+
+  // add Conversation data
+  for (let i = 0; i < conversationData.length; i++) {
+    let participantData = [];
+    for (let j = 0; j < conversationData[i].participants.length; j++) {
+      const participantId = await User.findOne({
+        name: conversationData[i].participants[j],
+      });
+      participantData.push(participantId);
+    }
+    const messages = await Message.find({
+      $or: [
+        {
+          $and: [
+            { sender: participantData[0] },
+            { recipient: participantData[1] },
+          ],
+        },
+        {
+          $and: [
+            { sender: participantData[1] },
+            { recipient: participantData[0] },
+          ],
+        },
+      ],
+    });
+    let messageData = messages;
+    let unreadMsgsData = [];
+    const unreadMsgs0 = await Message.find({
+      $and: [{ sender: participantData[1] }, { recipient: participantData[0] }],
+    });
+    unreadMsgsData.push(unreadMsgs0.length);
+
+    const unreadMsgs1 = await Message.find({
+      $and: [{ sender: participantData[0] }, { recipient: participantData[1] }],
+    });
+    unreadMsgsData.push(unreadMsgs1.length);
+
+    const mostRecentMsgData = messageData[messageData.length - 1];
+    const conversation = new Conversation({
+      participants: participantData,
+      messages: messageData,
+      unreadMsgs: unreadMsgsData,
+      mostRecentMsg: mostRecentMsgData,
+      pinned: [0, 0],
+      deleted: [0, 0],
+    });
+    console.log(conversation);
+    await conversation.save();
   }
 
   // add Invite data
