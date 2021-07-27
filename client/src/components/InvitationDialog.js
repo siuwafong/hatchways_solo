@@ -26,6 +26,7 @@ const InvitationDialog = ({
   setFriends,
   letOpen,
   currentUser,
+  setSelectedChat,
 }) => {
   const [open, setOpen] = useState(letOpen);
   const [friendEmail, setFriendEmail] = useState('');
@@ -202,6 +203,7 @@ const InvitationDialog = ({
                     setFriends={setFriends}
                     friends={friends}
                     setFilteredFriends={setFilteredFriends}
+                    setSelectedChat={setSelectedChat}
                   />
                 ))}
             </DialogContent>

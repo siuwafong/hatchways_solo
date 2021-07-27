@@ -7,7 +7,6 @@ const multer = require('multer');
 const { storage } = require('./cloudinary');
 const upload = multer({ storage });
 const bcrypt = require('bcrypt');
-const { ConnectionStates } = require('mongoose');
 
 require('dotenv').config();
 

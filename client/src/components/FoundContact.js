@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react"
-import "./FoundContact.css"
-import { ListItem, ListItemText, Button, Box } from "@material-ui/core"
-import { spacing } from "@material-ui/system"
-import { url, userId } from "../utils/MockData"
-import { v4 as uuidv4 } from "uuid"
-import dayjs from "dayjs"
+import React, { useState, useEffect } from 'react';
+import './FoundContact.css';
+import { ListItem, ListItemText, Button, Box } from '@material-ui/core';
+import { spacing } from '@material-ui/system';
+import { url, userId } from '../utils/MockData';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 const FoundContact = ({
   setFilteredFriends,
   friends,
+  setSelectedChat,
   setFriends,
   foundContacts,
   invites,
@@ -18,35 +19,35 @@ const FoundContact = ({
   id,
   type,
 }) => {
-  const [relationship, setRelationship] = useState("")
+  const [relationship, setRelationship] = useState('');
 
-  const checkRelationship = name => {
-    const contact = foundContacts.find(person => person.name === name)
-    if (invites.sent.some(person => person.name === name)) {
-      setRelationship(`You have sent an invite to ${name}`)
-    } else if (invites.received.some(person => person.name === name)) {
-      setRelationship(`${name} has sent you an invite`)
+  const checkRelationship = (name) => {
+    const contact = foundContacts.find((person) => person.name === name);
+    if (invites.sent.some((person) => person.name === name)) {
+      setRelationship(`You have sent an invite to ${name}`);
+    } else if (invites.received.some((person) => person.name === name)) {
+      setRelationship(`${name} has sent you an invite`);
     } else if (contact.friends.includes(userId)) {
-      setRelationship(`You and ${name} are already friends`)
+      setRelationship(`You and ${name} are already friends`);
     } else {
-      setRelationship("")
+      setRelationship('');
     }
-  }
+  };
 
-  useEffect(() => checkRelationship(name), [name])
+  useEffect(() => checkRelationship(name), [name]);
 
-  const sendInvite = contactId => {
-    fetch(`http://${url}/invite/${userId}/send`, {
-      method: "POST",
+  const sendInvite = (contactId) => {
+    fetch(`http://${url}/invite/send`, {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "include"
-    }).catch(err => console.error(err))
+      credentials: 'include',
+    }).catch((err) => console.error(err));
     setInvites({
       ...invites,
       sent: [
@@ -57,71 +58,77 @@ const FoundContact = ({
           id: contactId,
         },
       ],
-    })
-    setRelationship(`You have sent an invite to ${name}`)
-  }
+    });
+    setRelationship(`You have sent an invite to ${name}`);
+  };
 
-  const ignoreInvite = contactId => {
-    fetch(`http://${url}/invite/${userId}/reject`, {
-      method: "POST",
+  const ignoreInvite = (contactId) => {
+    fetch(`http://${url}/invite/reject`, {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "include"
-    }).catch(err => console.error(err))
+      credentials: 'include',
+    }).catch((err) => console.error(err));
 
     const updatedInvite = {
       name,
       sendDate: dayjs(),
       id: contactId,
       image,
-      status: "declined",
-    }
+      status: 'declined',
+    };
 
     setInvites({
       ...invites,
       received: invites.received
-        .filter(invite => invite.name !== name)
+        .filter((invite) => invite.name !== name)
         .concat(updatedInvite),
-    })
-  }
+    });
+  };
 
-  const acceptInvite = contactId => {
-    fetch(`http://${url}/invite/${userId}/approve`, {
-      method: "POST",
+  const acceptInvite = (contactId) => {
+    setSelectedChat(null);
+    let newFriend;
+
+    fetch(`http://${url}/invite/approve`, {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         contactId,
       }),
-      credentials: "include"
+      credentials: 'include',
     })
-      .then(res => res.json())
-      .then(data => {
-        setFriends([...friends, data[0]])
-        setFilteredFriends([...friends, data[0]])
-      })
+      .then((res) => res.json())
+      .then((data) => {
+        newFriend = data;
+        console.log(newFriend);
+        setFriends([...friends, newFriend]);
+        setFilteredFriends([...friends, newFriend]);
+        setSelectedChat(newFriend);
+      });
 
     setInvites({
       ...invites,
-      received: invites.received.filter(invite => invite.name !== name),
-    })
-  }
+      received: invites.received.filter((invite) => invite.name !== name),
+    });
+  };
 
   return (
     <ListItem>
       <img src={image} alt={name} className="foundContactImage" />
       <ListItemText
         primary={name}
-        secondary={type === "search" && relationship}
+        secondary={type === 'search' && relationship}
       />
-      {relationship === "" && type === "search" && (
+      {relationship === '' && type === 'search' && (
         <Button
           variant="contained"
           color="primary"
@@ -131,7 +138,7 @@ const FoundContact = ({
         </Button>
       )}
       {relationship === `${name} has sent you an invite` &&
-        type === "received" && (
+        type === 'received' && (
           <>
             <Box mr={2}>
               <Button
@@ -154,7 +161,7 @@ const FoundContact = ({
           </>
         )}
     </ListItem>
-  )
-}
+  );
+};
 
-export default FoundContact
+export default FoundContact;

@@ -20,7 +20,6 @@ const ConversationSchema = new Schema({
   mostRecentMsg: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
-    default: '',
   },
   deleted: [
     {

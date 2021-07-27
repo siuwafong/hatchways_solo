@@ -25,8 +25,9 @@ const jwt = require('jsonwebtoken');
 // @route GET /user/:id
 // @desc fetch user data
 // @access Public
-router.get('/:id', auth, async (req, res, next) => {
-  const { id } = req.params;
+router.get('/', auth, async (req, res, next) => {
+  // const { id } = req.params;
+  const id = req.userInfo.id;
   try {
     if (req.userInfo.id === id) {
       const user = await User.findById(id);

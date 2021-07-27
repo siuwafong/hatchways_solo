@@ -1,7 +1,7 @@
 ## Refactoring
 
-- separate message schema to conversation and message schema
 - add loading animations
+- add conversation when a user accepts an invite
 
 ## New Features
 

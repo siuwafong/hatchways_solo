@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/users');
 const Invite = require('../models/invites');
-const Message = require('../models/messages');
 const dayjs = require('dayjs');
 const multer = require('multer');
 const { storage } = require('../cloudinary');
-const upload = multer({ storage });
 const {
   validateUser,
   validateMessage,
@@ -51,10 +49,10 @@ router.get('/:id/invitations', auth, async (req, res, next) => {
 // @route POST /invite/:id/send
 // @desc send an invite to an existing user
 // access Private
-router.post('/:id/send', auth, async (req, res, next) => {
-  const { id } = req.params;
+router.post('/send', auth, async (req, res, next) => {
   try {
-    if (req.userInfo.id === id) {
+    if (req.userInfo.id) {
+      const id = req.userInfo.id;
       const { contactId } = req.body;
       const existingInvite = await Invite.find({
         $and: [{ sender: id }, { recipient: contactId }],
@@ -83,10 +81,10 @@ router.post('/:id/send', auth, async (req, res, next) => {
 // @route POST /invite/:id/reject
 // @desc reject an invite sent by another user
 // access Private
-router.post('/:id/reject', auth, async (req, res, next) => {
-  const { id } = req.params;
+router.post('/reject', auth, async (req, res, next) => {
   try {
-    if (req.userInfo.id === id) {
+    if (req.userInfo.id) {
+      const id = req.userInfo.id;
       const { contactId } = req.body;
       await Invite.updateOne(
         {
@@ -109,10 +107,10 @@ router.post('/:id/reject', auth, async (req, res, next) => {
 // @route POST /invite/:id/approve
 // @desc accept an invitation from another user
 // access Private
-router.post('/:id/approve', auth, async (req, res, next) => {
-  const { id } = req.params;
+router.post('/approve', auth, async (req, res, next) => {
+  const id = req.userInfo.id;
   try {
-    if (req.userInfo.id === id) {
+    if (req.userInfo.id) {
       const { contactId } = req.body;
       await Invite.updateOne(
         {
@@ -133,8 +131,20 @@ router.post('/:id/approve', auth, async (req, res, next) => {
         },
         { $addToSet: { friends: id } }
       );
-      const newFriend = await User.find({ _id: contactId });
-      res.json(newFriend);
+      const newFriend = await User.findOne({ _id: contactId });
+      const user = await User.findOne({ _id: id });
+
+      const newConversation = await new Conversation({
+        participants: [user, newFriend],
+        messages: [],
+        deleted: [false, false],
+        unreadMsgs: [0, 0],
+        pinned: [false, false],
+      });
+
+      await newConversation.save();
+
+      res.json(newConversation);
     } else {
       res
         .status(401)

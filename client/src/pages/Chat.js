@@ -33,7 +33,7 @@ const Chat = (props) => {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(null);
@@ -44,7 +44,7 @@ const Chat = (props) => {
   const newUser = props.location.state ? props.location.state.newUser : '';
 
   useEffect(() => {
-    fetch(`http://${url}/user/${newUserId}`, {
+    fetch(`http://${url}/user/`, {
       credentials: 'include',
     })
       .then((res) => res.json())
@@ -58,14 +58,14 @@ const Chat = (props) => {
   useEffect(() => {
     let friends = [];
 
-    fetch(`http://${url}/message/${newUserId}/conversations/all`, {
+    fetch(`http://${url}/message/conversations/all`, {
       credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => data.map((item) => friends.push(item)))
       .then(() => setFriends(friends))
       .then(() => setFilteredFriends(friends));
-  }, []);
+  }, [selectedChat, messages]);
 
   if (!props.location.state) return <Redirect to="/login" />;
 
@@ -74,41 +74,47 @@ const Chat = (props) => {
   };
 
   const getChatMsgs = (conversationId) => {
-    let idx;
-    let tempSelectedChat;
-
-    fetch(
-      `http://${url}/message/${currentUser._id}/conversation/${conversationId}`,
-      {
-        credentials: 'include',
-      }
-    )
+    fetch(`http://${url}/message/conversation/${conversationId}`, {
+      credentials: 'include',
+    })
       .then((res) => res.json())
-      .then((data) => setMessages(data))
-      .then(
-        () =>
-          (tempSelectedChat = friends.filter(
-            (friend) => friend._id === conversationId
-          )[0])
-      )
-      .then(() => getIdx())
-      .then(
-        (idx) =>
-          (tempSelectedChat.unreadMsgs = tempSelectedChat.unreadMsgs.map(
-            (item, i) => (i === idx ? item : 0)
-          ))
-      )
-      .then(() => setSelectedChat(tempSelectedChat));
+      .then((data) => setMessages(data));
 
-    const getIdx = () => {
-      if (tempSelectedChat.participants[0]._id === currentUser._id) {
-        idx = 0;
-        return idx;
+    const newSelectedChat = friends.filter(
+      (friend) => friend._id === conversationId
+    )[0];
+    setSelectedChat(newSelectedChat);
+  };
+
+  const getSelectedChat = () => {
+    if (selectedChat !== null) {
+      if (selectedChat.participants[0]._id === currentUser._id) {
+        return selectedChat.participants[1].name;
       } else {
-        idx = 1;
-        return idx;
+        return selectedChat.participants[0].name;
       }
+    }
+    return null;
+  };
+
+  const sendMsg = (msg) => {
+    const body = {
+      sender: currentUser._id,
+      recipient:
+        selectedChat.participants[0]._id === currentUser._id
+          ? selectedChat.participants[1]._id
+          : selectedChat.participants[0]._id,
+      content: msg,
+      id: selectedChat._id,
     };
+    axios
+      .post(`http://${url}/message/new`, body, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+      .then((res) => setMessages([...messages, res.data.message]));
   };
 
   const toggleSearch = (e) => {
@@ -128,22 +134,13 @@ const Chat = (props) => {
 
   const toggleMsgSubmit = (e) => {
     e.preventDefault();
-    setMessages([
-      ...messages,
-      {
-        type: 'msg',
-        content: newMsg,
-        sender: currentUser.name,
-        recipient: selectedChat.name,
-        read: false,
-        id: uuidv4(),
-      },
-    ]);
+    sendMsg(newMsg);
     setNewMsg('');
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setOpenDialog('');
   };
 
   const logout = () => {
@@ -231,6 +228,7 @@ const Chat = (props) => {
           setFilteredFriends={setFilteredFriends}
           letOpen={true}
           setOpenDialog={setOpenDialog}
+          setSelectedChat={setSelectedChat}
         />
       )}
       {newUser === true && (
@@ -340,13 +338,7 @@ const Chat = (props) => {
       </Grid>
       <Grid className="currentChatContainer settingsIcon3">
         <Grid className="currentChatTitle">
-          <span className="currentChatName">
-            {selectedChat !== null
-              ? selectedChat.participants[0]._id === currentUser._id
-                ? selectedChat.participants[1].name
-                : selectedChat.participants[0].name
-              : ''}
-          </span>
+          <span className="currentChatName">{getSelectedChat()}</span>
           <Grid
             className={`statusDotCurrent ${
               selectedChat !== null
@@ -371,7 +363,7 @@ const Chat = (props) => {
                 type={message.type}
                 username={message.sender.name}
                 direction={
-                  message.sender.name === currentUser.name ? 'sent' : 'received'
+                  message.sender === currentUser._id ? 'sent' : 'received'
                 }
                 content={message.content}
                 sendDate={dayjs(message.createdAt).format('hh:mma')}
