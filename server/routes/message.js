@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/users');
-const Invite = require('../models/invites');
 const Message = require('../models/messages');
+const Conversation = require('../models/conversation');
+const User = require('../models/users');
 const dayjs = require('dayjs');
 const multer = require('multer');
 const { storage } = require('../cloudinary');
@@ -73,10 +73,55 @@ router.get('/:id/conversations', auth, async (req, res, next) => {
 router.get('/:id/conversations/all', auth, async (req, res, next) => {
   const { id } = req.params;
   try {
+    if (req.userInfo.id === id) {
+      const conversations = await Conversation.find({
+        participants: { $in: [id] },
+      })
+        .populate('participants')
+        .populate('mostRecentMsg');
+      res.status(200).json(conversations);
+    }
   } catch (err) {
     console.error(err.message);
     res.status(404).send('404 Not Found');
   }
 });
+
+// @route GET /message/conversation/:userId/:friendId
+// @desc fetch all messages for a given conversation and mark unread messages as read
+// access Private
+router.get(
+  '/:id/conversation/:conversationId',
+  auth,
+  async (req, res, next) => {
+    const { id, conversationId } = req.params;
+    try {
+      if (req.userInfo.id === id) {
+        const messages = await Conversation.findOne({
+          _id: conversationId,
+        }).populate('messages');
+
+        let idx;
+        if (messages.participants[0] === id) {
+          idx = 1;
+        } else {
+          idx = 0;
+        }
+
+        messages.unreadMsgs[idx] = 0;
+
+        await Conversation.findOneAndUpdate(
+          { _id: conversationId },
+          { $set: { unreadMsgs: messages.unreadMsgs } }
+        );
+
+        res.status(200).json(messages.messages);
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(404).send('404 Not Found');
+    }
+  }
+);
 
 module.exports = router;

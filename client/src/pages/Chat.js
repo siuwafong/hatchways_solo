@@ -34,7 +34,6 @@ const Chat = (props) => {
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState(null);
-  const [messageList, setMessageList] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(null);
@@ -59,27 +58,14 @@ const Chat = (props) => {
   useEffect(() => {
     let friends = [];
 
-    fetch(`http://${url}/user/${newUserId}/contacts`, {
+    fetch(`http://${url}/message/${newUserId}/conversations/all`, {
       credentials: 'include',
     })
       .then((res) => res.json())
-      .then((data) => data[0].friends.map((item) => friends.push(item)))
+      .then((data) => data.map((item) => friends.push(item)))
       .then(() => setFriends(friends))
-      .then(() => setFilteredFriends(friends))
-      .catch((err) => console.error(err));
+      .then(() => setFilteredFriends(friends));
   }, []);
-
-  useEffect(() => {
-    let allMessages = [];
-
-    fetch(`http://${url}/message/${newUserId}/conversations`, {
-      credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => data.map((message) => allMessages.push(message)))
-      .then(() => setMessageList(allMessages))
-      .catch((err) => console.error(err));
-  }, [selectedChat]);
 
   if (!props.location.state) return <Redirect to="/login" />;
 
@@ -87,43 +73,51 @@ const Chat = (props) => {
     anchorEl === null ? setAnchorEl(e.target) : setAnchorEl(null);
   };
 
-  const selectChat = (friendId) => {
-    const selectedFriend = friends.find((friend) => friend._id === friendId);
-    setSelectedChat(selectedFriend);
+  const getChatMsgs = (conversationId) => {
+    let idx;
+    let tempSelectedChat;
 
-    let selectedMessages = messageList.filter((message) => {
-      const isRecipientSelectedFriend =
-        message.recipient.name === selectedFriend.name;
-      const isSenderCurrentUser = message.sender.name === currentUser.name;
-      const isRecipientCurrentUser =
-        message.recipient.name === currentUser.name;
-      const isSenderSelectedFriend =
-        message.sender.name === selectedFriend.name;
-      const isRecipientFriendAndSenderUser =
-        isRecipientSelectedFriend && isSenderCurrentUser;
-      const isRecipientUserAndSenderFriend =
-        isRecipientCurrentUser && isSenderSelectedFriend;
+    fetch(
+      `http://${url}/message/${currentUser._id}/conversation/${conversationId}`,
+      {
+        credentials: 'include',
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setMessages(data))
+      .then(
+        () =>
+          (tempSelectedChat = friends.filter(
+            (friend) => friend._id === conversationId
+          )[0])
+      )
+      .then(() => getIdx())
+      .then(
+        (idx) =>
+          (tempSelectedChat.unreadMsgs = tempSelectedChat.unreadMsgs.map(
+            (item, i) => (i === idx ? item : 0)
+          ))
+      )
+      .then(() => setSelectedChat(tempSelectedChat));
 
-      return isRecipientFriendAndSenderUser || isRecipientUserAndSenderFriend;
-    });
-    selectedMessages.sort((a, b) => a.createdAt - b.createdAt);
-    fetch(`http://${url}/message/${newUserId}/markread/${friendId}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-
-    setMessages(selectedMessages);
+    const getIdx = () => {
+      if (tempSelectedChat.participants[0]._id === currentUser._id) {
+        idx = 0;
+        return idx;
+      } else {
+        idx = 1;
+        return idx;
+      }
+    };
   };
 
   const toggleSearch = (e) => {
     setMessages(null);
     setSelectedChat(null);
     const searchedFriends = friends.filter((friend) =>
-      friend.name.includes(e.target.value)
+      friend.participants[0]._id !== currentUser._id
+        ? friend.participants[0].name.includes(e.target.value)
+        : friend.participants[1].name.includes(e.target.value)
     );
     setFilteredFriends(searchedFriends);
   };
@@ -312,36 +306,33 @@ const Chat = (props) => {
         />
         <Grid className="usersContainer settingsIcon2">
           {filteredFriends.length !== 0 ? (
-            filteredFriends.map((user) => (
-              <Grid
-                onClick={() => selectChat(user._id)}
-                className={
-                  selectedChat !== null
-                    ? selectedChat._id === user._id
-                      ? `selectedChat`
+            filteredFriends.map((user) => {
+              const idx = user.participants[0]._id === currentUser._id ? 1 : 0;
+              return (
+                <Grid
+                  onClick={() => getChatMsgs(user._id)}
+                  className={
+                    selectedChat !== null
+                      ? JSON.stringify(user) === JSON.stringify(selectedChat)
+                        ? `selectedChat`
+                        : ''
                       : ''
-                    : ''
-                }
-                key={user._id}
-              >
-                <User
-                  name={user.name}
-                  profileImg={user.image}
-                  recentMsg={
-                    messageList
-                      .filter((message) => message.sender.name === user.name)
-                      .sort((a, b) => b.createdAt - a.createdAt)[0] || ''
                   }
-                  unreadMsgs={
-                    messageList
-                      .filter((message) => message.sender.name === user.name)
-                      .filter((message) => message.read === false).length
-                  }
-                  status={user.status}
-                  id={user._id}
-                />
-              </Grid>
-            ))
+                  key={user._id}
+                >
+                  <User
+                    name={user.participants[idx].name}
+                    profileImg={user.participants[idx].image}
+                    recentMsg={
+                      user.mostRecentMsg !== undefined ? user.mostRecentMsg : ''
+                    }
+                    unreadMsgs={user.unreadMsgs[idx]}
+                    status={user.participants[idx].status}
+                    id={user.participants[idx]._id}
+                  />
+                </Grid>
+              );
+            })
           ) : (
             <Grid>You have no friends yet.</Grid>
           )}
@@ -350,7 +341,11 @@ const Chat = (props) => {
       <Grid className="currentChatContainer settingsIcon3">
         <Grid className="currentChatTitle">
           <span className="currentChatName">
-            {selectedChat !== null && selectedChat.name}
+            {selectedChat !== null
+              ? selectedChat.participants[0]._id === currentUser._id
+                ? selectedChat.participants[1].name
+                : selectedChat.participants[0].name
+              : ''}
           </span>
           <Grid
             className={`statusDotCurrent ${
@@ -381,11 +376,9 @@ const Chat = (props) => {
                 content={message.content}
                 sendDate={dayjs(message.createdAt).format('hh:mma')}
                 userImg={
-                  message.recipient.name === currentUser.name
-                    ? friends.filter(
-                        (friend) => friend.name === message.sender.name
-                      )[0].image
-                    : ''
+                  selectedChat.participants[0]._id === currentUser._id
+                    ? selectedChat.participants[1].image
+                    : selectedChat.participants[0].image
                 }
                 key={message._id}
               />

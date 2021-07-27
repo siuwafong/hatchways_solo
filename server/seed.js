@@ -333,12 +333,12 @@ const seedDB = async () => {
     let messageData = messages;
     let unreadMsgsData = [];
     const unreadMsgs0 = await Message.find({
-      $and: [{ sender: participantData[1] }, { recipient: participantData[0] }],
+      $and: [{ sender: participantData[0] }, { recipient: participantData[1] }],
     });
     unreadMsgsData.push(unreadMsgs0.length);
 
     const unreadMsgs1 = await Message.find({
-      $and: [{ sender: participantData[0] }, { recipient: participantData[1] }],
+      $and: [{ sender: participantData[1] }, { recipient: participantData[0] }],
     });
     unreadMsgsData.push(unreadMsgs1.length);
 

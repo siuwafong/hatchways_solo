@@ -10,16 +10,16 @@ const ConversationSchema = new Schema({
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: true,
       },
     ],
     validate: [arrayLimit, 'Participants exceed the limit of 2'],
   },
-  messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+  messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
   mostRecentMsg: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'message',
+    ref: 'Message',
     default: '',
   },
   deleted: [

@@ -1,13 +1,15 @@
-import React from "react"
-import "./User.css"
-import { Grid, Typography } from "@material-ui/core"
+import React from 'react';
+import './User.css';
+import { Grid, Typography } from '@material-ui/core';
 
 const User = ({ name, profileImg, status, recentMsg, unreadMsgs }) => {
-  let displayMsg = ""
-  if (recentMsg.type === "msg") {
-    displayMsg = recentMsg.content
+  let displayMsg = '';
+  if (recentMsg.type === 'msg') {
+    displayMsg = recentMsg.content;
+  } else if (recentMsg.type === 'img') {
+    displayMsg = 'Sent photo';
   } else {
-    displayMsg = "Sent photo"
+    displayMsg = '';
   }
 
   return (
@@ -16,7 +18,7 @@ const User = ({ name, profileImg, status, recentMsg, unreadMsgs }) => {
         <img className="userPic" src={profileImg} alt="userPic" />
         <Grid
           className={`statusDot ${
-            status === "Online" ? "statusAvailable" : "statusAway"
+            status === 'Online' ? 'statusAvailable' : 'statusAway'
           }`}
         ></Grid>
       </Grid>
@@ -27,15 +29,15 @@ const User = ({ name, profileImg, status, recentMsg, unreadMsgs }) => {
         </Typography>
       </Grid>
       <Grid
-        className={`unreadContainer ${unreadMsgs === 0 && "hideUnreadMsgs"}`}
+        className={`unreadContainer ${unreadMsgs === 0 && 'hideUnreadMsgs'}`}
       >
         <Grid
-          className={`unreadMsgDot ${unreadMsgs > 9 && "longUnreadMsgDot"}`}
+          className={`unreadMsgDot ${unreadMsgs > 9 && 'longUnreadMsgDot'}`}
         ></Grid>
         <Grid className="unreadMsgs">{unreadMsgs}</Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default User
+export default User;
